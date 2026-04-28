@@ -12,7 +12,7 @@ import (
 )
 
 func Routes(r *gin.RouterGroup, db *gorm.DB, config *config.Config) {
-	jwt := auth.NewJWTManager(config.JWT.Secret)
+	jwt := auth.NewJWTManager(config.JWT.Secret, config.JWT.TTL)
 	userRepo := repository.NewUserRepo(db)
 
 	userService := service.NewUserService(userRepo)
@@ -31,5 +31,9 @@ func Routes(r *gin.RouterGroup, db *gorm.DB, config *config.Config) {
 	userRoute := r.Group("users")
 	{
 		userRoute.GET("/me", middleware.AuthMiddleware(config), userHandler.Me)
+		userRoute.GET("/", middleware.AuthMiddleware(config), middleware.RoleMiddleware("admin"), userHandler.GetAll)
+		userRoute.PATCH("/profile", middleware.AuthMiddleware(config), userHandler.UpdateProfile)
+		userRoute.POST("/update-password", middleware.AuthMiddleware(config), userHandler.UpdatePassword)
+		userRoute.DELETE("/", middleware.AuthMiddleware(config), userHandler.Delete)
 	}
 }

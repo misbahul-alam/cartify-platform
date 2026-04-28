@@ -9,7 +9,10 @@ import (
 type UserRepository interface {
 	FindUserByEmail(email string) (*model.User, error)
 	FindUserById(id uuid.UUID) (*model.User, error)
+	FindAllUsers() ([]model.User, error)
 	CreateUser(firstName string, lastName string, email string, password string) (*model.User, error)
+	UpdateUser(user *model.User) error
+	DeleteUser(id uuid.UUID) error
 }
 
 type UserRepo struct {
@@ -30,6 +33,7 @@ func (repo *UserRepo) FindUserByEmail(email string) (*model.User, error) {
 	}
 	return &user, nil
 }
+
 func (repo *UserRepo) FindUserById(id uuid.UUID) (*model.User, error) {
 	var user model.User
 	err := repo.db.Where("id = ?", id).First(&user).Error
@@ -37,6 +41,14 @@ func (repo *UserRepo) FindUserById(id uuid.UUID) (*model.User, error) {
 		return nil, err
 	}
 	return &user, nil
+}
+
+func (repo *UserRepo) FindAllUsers() ([]model.User, error) {
+	var users []model.User
+	if err := repo.db.Find(&users).Error; err != nil {
+		return nil, err
+	}
+	return users, nil
 }
 
 func (repo *UserRepo) CreateUser(firstName, lastName, email, password string) (*model.User, error) {
@@ -52,4 +64,12 @@ func (repo *UserRepo) CreateUser(firstName, lastName, email, password string) (*
 	}
 
 	return user, nil
+}
+
+func (repo *UserRepo) UpdateUser(user *model.User) error {
+	return repo.db.Save(user).Error
+}
+
+func (repo *UserRepo) DeleteUser(id uuid.UUID) error {
+	return repo.db.Delete(&model.User{}, id).Error
 }

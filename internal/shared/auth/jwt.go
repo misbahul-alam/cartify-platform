@@ -7,7 +7,8 @@ import (
 )
 
 type JWTManager struct {
-	secret string
+	secret    string
+	accessTTL time.Duration
 }
 
 type Claims struct {
@@ -17,8 +18,8 @@ type Claims struct {
 	jwt.RegisteredClaims
 }
 
-func NewJWTManager(secret string) *JWTManager {
-	return &JWTManager{secret: secret}
+func NewJWTManager(secret string, accessTTL time.Duration) *JWTManager {
+	return &JWTManager{secret: secret, accessTTL: accessTTL}
 }
 
 func (j *JWTManager) generate(userID string, role string, ttl time.Duration, tokenType string) (string, error) {
@@ -37,7 +38,7 @@ func (j *JWTManager) generate(userID string, role string, ttl time.Duration, tok
 }
 
 func (j *JWTManager) GenerateAccess(userID string, role string) (string, error) {
-	return j.generate(userID, role, 15*time.Minute, "access")
+	return j.generate(userID, role, j.accessTTL, "access")
 }
 
 func (j *JWTManager) GenerateRefresh(userID string, role string) (string, error) {

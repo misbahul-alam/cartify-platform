@@ -9,9 +9,14 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-func NewPostgres(dbURL string) *gorm.DB {
+func NewPostgres(dbURL string, appEnv string) *gorm.DB {
+	logLevel := logger.Error
+	if appEnv == "development" {
+		logLevel = logger.Info
+	}
+
 	db, err := gorm.Open(postgres.Open(dbURL), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
+		Logger: logger.Default.LogMode(logLevel),
 	})
 
 	if err != nil {

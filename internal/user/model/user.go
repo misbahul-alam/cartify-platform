@@ -15,16 +15,16 @@ const (
 )
 
 type User struct {
-	ID         uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
-	FirstName  string    `gorm:"size:50;not null"`
-	LastName   string    `gorm:"size:50;not null"`
-	Email      string    `gorm:"unique;size:150;not null"`
-	Role       Role      `gorm:"default:'customer';not null"`
-	Password   string    `gorm:"size:255;not null"`
-	IsActive   bool      `gorm:"default:true;not null"`
-	IsVerified bool      `gorm:"default:false;not null"`
-	CreatedAt  time.Time `gorm:"DEFAULT:CURRENT_TIMESTAMP"`
-	UpdatedAt  time.Time `gorm:"DEFAULT:CURRENT_TIMESTAMP"`
+	ID         uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey" json:"id"`
+	FirstName  string    `gorm:"size:50;not null" json:"first_name"`
+	LastName   string    `gorm:"size:50;not null" json:"last_name"`
+	Email      string    `gorm:"unique;size:150;not null" json:"email"`
+	Role       Role      `gorm:"default:'customer';not null" json:"role"`
+	Password   string    `gorm:"size:255;not null" json:"-"`
+	IsActive   bool      `gorm:"default:true;not null" json:"is_active"`
+	IsVerified bool      `gorm:"default:false;not null" json:"is_verified"`
+	CreatedAt  time.Time `gorm:"DEFAULT:CURRENT_TIMESTAMP" json:"created_at"`
+	UpdatedAt  time.Time `gorm:"DEFAULT:CURRENT_TIMESTAMP" json:"updated_at"`
 }
 
 func (User) TableName() string {

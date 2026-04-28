@@ -25,7 +25,7 @@ func AuthMiddleware(config *config.Config) gin.HandlerFunc {
 			return
 		}
 
-		jwt := auth.NewJWTManager(config.JWT.Secret)
+		jwt := auth.NewJWTManager(config.JWT.Secret, config.JWT.TTL)
 
 		claims, err := jwt.Verify(parts[1])
 		if err != nil {

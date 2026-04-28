@@ -8,7 +8,8 @@ import (
 )
 
 type Config struct {
-	AppEnv string
+	AppEnv     string
+	ServerPort string
 
 	DB struct {
 		URL string
@@ -27,6 +28,7 @@ func Load() *Config {
 	v.AutomaticEnv()
 
 	v.SetDefault("APP_ENV", "development")
+	v.SetDefault("SERVER_PORT", "8000")
 	v.SetDefault("JWT_TTL", "15m")
 
 	if err := v.ReadInConfig(); err != nil {
@@ -34,12 +36,19 @@ func Load() *Config {
 	}
 
 	cfg := &Config{
-		AppEnv: v.GetString("APP_ENV"),
+		AppEnv:     v.GetString("APP_ENV"),
+		ServerPort: v.GetString("SERVER_PORT"),
 	}
 
 	cfg.DB.URL = v.GetString("DB_URL")
 	cfg.JWT.Secret = v.GetString("JWT_SECRET")
-	cfg.JWT.TTL, _ = time.ParseDuration(v.GetString("JWT_TTL"))
+
+	duration, err := time.ParseDuration(v.GetString("JWT_TTL"))
+	if err != nil {
+		log.Printf("Invalid JWT_TTL, using default 15m: %v", err)
+		duration = 15 * time.Minute
+	}
+	cfg.JWT.TTL = duration
 
 	return cfg
 }

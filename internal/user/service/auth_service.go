@@ -28,18 +28,20 @@ func (s *AuthService) Register(firstName string, lastName string, email string, 
 		return errors.New("user already exists")
 	}
 
-	hashPassword, _ := auth.HashPassword(password)
-	user, err := s.repo.CreateUser(
+	hashPassword, err := auth.HashPassword(password)
+	if err != nil {
+		return fmt.Errorf("failed to hash password: %w", err)
+	}
+	_, err = s.repo.CreateUser(
 		firstName, lastName, email, hashPassword,
 	)
 	if err != nil {
 		return err
 	}
 
-	fmt.Println(user)
-
 	return nil
 }
+
 func (s *AuthService) Login(email string, password string) (*TokenResponse, error) {
 	user, err := s.repo.FindUserByEmail(email)
 
@@ -51,14 +53,20 @@ func (s *AuthService) Login(email string, password string) (*TokenResponse, erro
 		return nil, errors.New("invalid credentials")
 	}
 
-	access, _ := s.jwt.GenerateAccess(user.ID.String(), string(user.Role))
-	refresh, _ := s.jwt.GenerateRefresh(user.ID.String(), string(user.Role))
+	access, err := s.jwt.GenerateAccess(user.ID.String(), string(user.Role))
+	if err != nil {
+		return nil, fmt.Errorf("failed to generate access token: %w", err)
+	}
+
+	refresh, err := s.jwt.GenerateRefresh(user.ID.String(), string(user.Role))
+	if err != nil {
+		return nil, fmt.Errorf("failed to generate refresh token: %w", err)
+	}
 
 	return &TokenResponse{
 		AccessToken:  access,
 		RefreshToken: refresh,
 	}, nil
-
 }
 
 func (s *AuthService) RefreshToken(token string) (string, error) {
