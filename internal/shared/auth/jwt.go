@@ -11,7 +11,7 @@ type JWTManager struct {
 }
 
 type Claims struct {
-	UserID int64  `json:"user_id"`
+	UserID string `json:"user_id"`
 	Role   string `json:"role"`
 	Type   string `json:"type"`
 	jwt.RegisteredClaims
@@ -21,7 +21,7 @@ func NewJWTManager(secret string) *JWTManager {
 	return &JWTManager{secret: secret}
 }
 
-func (j *JWTManager) generate(userID int64, role string, ttl time.Duration, tokenType string) (string, error) {
+func (j *JWTManager) generate(userID string, role string, ttl time.Duration, tokenType string) (string, error) {
 	claims := Claims{
 		UserID: userID,
 		Role:   role,
@@ -36,11 +36,11 @@ func (j *JWTManager) generate(userID int64, role string, ttl time.Duration, toke
 	return token.SignedString([]byte(j.secret))
 }
 
-func (j *JWTManager) GenerateAccess(userID int64, role string) (string, error) {
+func (j *JWTManager) GenerateAccess(userID string, role string) (string, error) {
 	return j.generate(userID, role, 15*time.Minute, "access")
 }
 
-func (j *JWTManager) GenerateRefresh(userID int64, role string) (string, error) {
+func (j *JWTManager) GenerateRefresh(userID string, role string) (string, error) {
 	return j.generate(userID, role, 7*24*time.Hour, "refresh")
 }
 

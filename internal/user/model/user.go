@@ -11,7 +11,7 @@ const (
 )
 
 type User struct {
-	ID         int64     `gorm:"primary_key;AUTO_INCREMENT"`
+	ID         string    `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
 	FirstName  string    `gorm:"size:50;not null"`
 	LastName   string    `gorm:"size:50;not null"`
 	Email      string    `gorm:"unique;size:150;not null"`

@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/misbahul-alam/cartify-platform/infra/config"
 	"github.com/misbahul-alam/cartify-platform/internal/shared/auth"
+	"github.com/misbahul-alam/cartify-platform/internal/shared/middleware"
 	"github.com/misbahul-alam/cartify-platform/internal/user/repository"
 	"github.com/misbahul-alam/cartify-platform/internal/user/service"
 	"github.com/misbahul-alam/cartify-platform/internal/user/transport/http/handler"
@@ -28,6 +29,6 @@ func Routes(r *gin.RouterGroup, db *gorm.DB, config *config.Config) {
 
 	userRoute := r.Group("users")
 	{
-		userRoute.GET("/me", userHandler.Me)
+		userRoute.GET("/me", middleware.AuthMiddleware(config), userHandler.Me)
 	}
 }
