@@ -60,3 +60,26 @@ func (s *AuthService) Login(email string, password string) (*TokenResponse, erro
 	}, nil
 
 }
+
+func (s *AuthService) RefreshToken(token string) (string, error) {
+	if token == "" {
+		return "", errors.New("invalid token")
+
+	}
+
+	claims, err := s.jwt.Verify(token)
+	if err != nil || claims == nil {
+		return "", err
+	}
+	if claims.Type != "refresh" {
+		return "", errors.New("invalid token")
+	}
+
+	newToken, err := s.jwt.GenerateAccess(claims.ID, string(claims.Role))
+	if err != nil {
+		return "", err
+
+	}
+	return newToken, nil
+
+}

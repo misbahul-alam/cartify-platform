@@ -25,6 +25,7 @@ func Routes(r *gin.RouterGroup, db *gorm.DB, config *config.Config) {
 	{
 		authRoute.POST("/login", authHandler.Login)
 		authRoute.POST("/register", authHandler.Register)
+		authRoute.POST("/refresh-token", authHandler.RefreshToken)
 	}
 
 	userRoute := r.Group("users")

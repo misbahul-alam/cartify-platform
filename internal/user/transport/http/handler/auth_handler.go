@@ -48,3 +48,19 @@ func (h *AuthHandler) Register(c *gin.Context) {
 		"message": "Register success",
 	})
 }
+
+func (h *AuthHandler) RefreshToken(c *gin.Context) {
+	var req dto.RefreshRequest
+	if err := c.ShouldBind(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	newToken, err := h.service.RefreshToken(req.RefreshToken)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"access_token": newToken,
+	})
+}
