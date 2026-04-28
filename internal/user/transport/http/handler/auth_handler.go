@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/misbahul-alam/cartify-platform/internal/shared/response"
 	"github.com/misbahul-alam/cartify-platform/internal/user/service"
 	"github.com/misbahul-alam/cartify-platform/internal/user/transport/http/dto"
 )
@@ -19,48 +20,46 @@ func NewAuthHandler(service *service.AuthService) *AuthHandler {
 func (h *AuthHandler) Login(c *gin.Context) {
 	var req dto.LoginRequest
 	if err := c.ShouldBind(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		response.BadRequest(c, "Invalid request payload", err.Error())
 		return
 	}
 
 	res, err := h.service.Login(req.Email, req.Password)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		response.BadRequest(c, "Login failed", err.Error())
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"access_token": res.AccessToken, "refresh_token": res.RefreshToken})
+	response.Success(c, http.StatusOK, "Login successful", gin.H{"access_token": res.AccessToken, "refresh_token": res.RefreshToken})
 }
 
 func (h *AuthHandler) Register(c *gin.Context) {
 	var req dto.RegisterRequest
 	if err := c.ShouldBind(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		response.BadRequest(c, "Invalid request payload", err.Error())
 		return
 	}
 
 	err := h.service.Register(req.FirstName, req.LastName, req.Email, req.Password)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		response.BadRequest(c, "Registration failed", err.Error())
 		return
 	}
-	c.JSON(http.StatusCreated, gin.H{
-		"message": "Register success",
-	})
+	response.Success(c, http.StatusCreated, "Registration successful", nil)
 }
 
 func (h *AuthHandler) RefreshToken(c *gin.Context) {
 	var req dto.RefreshRequest
 	if err := c.ShouldBind(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		response.BadRequest(c, "Invalid request payload", err.Error())
 		return
 	}
 	newToken, err := h.service.RefreshToken(req.RefreshToken)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		response.BadRequest(c, "Token refresh failed", err.Error())
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{
+	response.Success(c, http.StatusOK, "Token refreshed successfully", gin.H{
 		"access_token": newToken,
 	})
 }

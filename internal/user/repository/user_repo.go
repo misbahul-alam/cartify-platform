@@ -1,13 +1,14 @@
 package repository
 
 import (
+	"github.com/google/uuid"
 	"github.com/misbahul-alam/cartify-platform/internal/user/model"
 	"gorm.io/gorm"
 )
 
 type UserRepository interface {
 	FindUserByEmail(email string) (*model.User, error)
-	FindUserById(id string) (*model.User, error)
+	FindUserById(id uuid.UUID) (*model.User, error)
 	CreateUser(firstName string, lastName string, email string, password string) (*model.User, error)
 }
 
@@ -29,7 +30,7 @@ func (repo *UserRepo) FindUserByEmail(email string) (*model.User, error) {
 	}
 	return &user, nil
 }
-func (repo *UserRepo) FindUserById(id string) (*model.User, error) {
+func (repo *UserRepo) FindUserById(id uuid.UUID) (*model.User, error) {
 	var user model.User
 	err := repo.db.Where("id = ?", id).First(&user).Error
 	if err != nil {

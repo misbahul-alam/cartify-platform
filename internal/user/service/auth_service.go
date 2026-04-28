@@ -51,8 +51,8 @@ func (s *AuthService) Login(email string, password string) (*TokenResponse, erro
 		return nil, errors.New("invalid credentials")
 	}
 
-	access, _ := s.jwt.GenerateAccess(user.ID, string(user.Role))
-	refresh, _ := s.jwt.GenerateRefresh(user.ID, string(user.Role))
+	access, _ := s.jwt.GenerateAccess(user.ID.String(), string(user.Role))
+	refresh, _ := s.jwt.GenerateRefresh(user.ID.String(), string(user.Role))
 
 	return &TokenResponse{
 		AccessToken:  access,
