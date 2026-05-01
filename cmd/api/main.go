@@ -11,11 +11,30 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	_ "github.com/misbahul-alam/cartify-platform/docs"
 	"github.com/misbahul-alam/cartify-platform/infra/config"
 	"github.com/misbahul-alam/cartify-platform/infra/database"
 	"github.com/misbahul-alam/cartify-platform/internal/user/model"
 	userHttp "github.com/misbahul-alam/cartify-platform/internal/user/transport/http"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
+
+// @title Cartify Platform API
+// @version 1.0
+// @description This is the API documentation for the Cartify Platform, an e-commerce solution built with Go, Gin, and PostgreSQL. It provides endpoints for user management, product catalog, order processing, and more.
+
+// @contact.name Misbahul Alam
+// @contact.url https://misbahulalam.com
+// @contact.email misbahulalam64@gmail.com
+
+// @host localhost:8080
+// @BasePath /api/v1
+
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Type "Bearer " followed by a space and then your token. For example: "Bearer eyJhbGci..."
 
 func main() {
 	cfg := config.Load()
@@ -32,6 +51,8 @@ func main() {
 
 	r := gin.New()
 	r.Use(gin.Logger(), gin.Recovery())
+
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	api := r.Group("/api/v1")
 	userHttp.Routes(api, db, cfg)

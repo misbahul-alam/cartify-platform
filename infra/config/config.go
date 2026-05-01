@@ -28,7 +28,7 @@ func Load() *Config {
 	v.AutomaticEnv()
 
 	v.SetDefault("APP_ENV", "development")
-	v.SetDefault("SERVER_PORT", "8000")
+	v.SetDefault("SERVER_PORT", "8080")
 	v.SetDefault("JWT_TTL", "15m")
 
 	if err := v.ReadInConfig(); err != nil {

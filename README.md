@@ -8,7 +8,16 @@ This repository is currently in bootstrap stage and has the Go module initialize
 
 ## 🚀 Tech Stack
 
-* **Language:** Go
-* **Framework:** Gin
-* **ORM:** GORM
-* **Database:** PostgreSQL, Redis
+- **Language:** Go
+- **Framework:** Gin
+- **ORM:** GORM
+- **Database:** PostgreSQL, Redis
+
+## 📖 API Documentation
+
+The API documentation is provided by Swagger.
+
+### Accessing Swagger UI
+
+Once the server is running, you can access the Swagger UI at:
+`http://localhost:8080/swagger/index.html`
