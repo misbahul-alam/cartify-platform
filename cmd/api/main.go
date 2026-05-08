@@ -15,6 +15,7 @@ import (
 	"github.com/misbahul-alam/cartify-platform/infra/config"
 	"github.com/misbahul-alam/cartify-platform/infra/database"
 	productModel "github.com/misbahul-alam/cartify-platform/internal/product/model"
+	productHttp "github.com/misbahul-alam/cartify-platform/internal/product/transport/http"
 	userModel "github.com/misbahul-alam/cartify-platform/internal/user/model"
 	userHttp "github.com/misbahul-alam/cartify-platform/internal/user/transport/http"
 	swaggerFiles "github.com/swaggo/files"
@@ -62,6 +63,7 @@ func main() {
 
 	api := r.Group("/api/v1")
 	userHttp.Routes(api, db, cfg)
+	productHttp.Routes(api, db, cfg)
 
 	srv := &http.Server{
 		Addr:    ":" + cfg.ServerPort,
