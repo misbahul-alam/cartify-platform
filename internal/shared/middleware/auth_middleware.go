@@ -33,6 +33,7 @@ func AuthMiddleware(config *config.Config) gin.HandlerFunc {
 			c.Abort()
 			return
 		}
+
 		if claims.Type != "access" {
 			response.Unauthorized(c, "Authorization header is invalid")
 			c.Abort()

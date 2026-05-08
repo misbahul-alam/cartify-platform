@@ -1,9 +1,11 @@
 package model
 
 import (
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type Role string
@@ -29,4 +31,9 @@ type User struct {
 
 func (User) TableName() string {
 	return "users"
+}
+
+func (u *User) BeforeSave(tx *gorm.DB) error {
+	u.Email = strings.ToLower(strings.TrimSpace(u.Email))
+	return nil
 }

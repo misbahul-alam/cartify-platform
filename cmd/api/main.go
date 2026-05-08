@@ -14,7 +14,8 @@ import (
 	_ "github.com/misbahul-alam/cartify-platform/docs"
 	"github.com/misbahul-alam/cartify-platform/infra/config"
 	"github.com/misbahul-alam/cartify-platform/infra/database"
-	"github.com/misbahul-alam/cartify-platform/internal/user/model"
+	productModel "github.com/misbahul-alam/cartify-platform/internal/product/model"
+	userModel "github.com/misbahul-alam/cartify-platform/internal/user/model"
 	userHttp "github.com/misbahul-alam/cartify-platform/internal/user/transport/http"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -45,7 +46,12 @@ func main() {
 
 	db := database.NewPostgres(cfg.DB.URL, cfg.AppEnv)
 
-	if err := db.AutoMigrate(&model.User{}); err != nil {
+	db.Exec(`CREATE EXTENSION IF NOT EXISTS "pgcrypto"`)
+
+	if err := db.AutoMigrate(
+		&userModel.User{},
+		&productModel.Category{},
+		&productModel.Product{}); err != nil {
 		log.Fatalf("failed to migrate database: %v", err)
 	}
 

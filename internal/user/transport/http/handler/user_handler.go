@@ -2,6 +2,7 @@ package handler
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -36,6 +37,8 @@ func (h *UserHandler) Me(c *gin.Context) {
 	if err != nil {
 		return
 	}
+
+	fmt.Println("id:", uid)
 
 	user, err := h.service.GetUserById(uid)
 	if err != nil {
