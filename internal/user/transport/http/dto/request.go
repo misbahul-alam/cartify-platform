@@ -18,8 +18,8 @@ type RefreshRequest struct {
 }
 
 type UpdateProfileRequest struct {
-	FirstName *string `json:"first_name,omitempty" binding:"omitempty,max=30"`
-	LastName  *string `json:"last_name,omitempty" binding:"omitempty,max=30"`
+	FirstName string `json:"first_name,omitempty" binding:"omitempty,max=30"`
+	LastName  string `json:"last_name,omitempty" binding:"omitempty,max=30"`
 }
 
 type UpdatePasswordRequest struct {

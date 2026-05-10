@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type UserRepository interface {
+type UserRepo interface {
 	FindUserByEmail(email string) (*model.User, error)
 	FindUserById(id uuid.UUID) (*model.User, error)
 	FindAllUsers() ([]model.User, error)
@@ -15,16 +15,16 @@ type UserRepository interface {
 	DeleteUser(id uuid.UUID) error
 }
 
-type UserRepo struct {
+type userRepo struct {
 	db *gorm.DB
 }
 
-func NewUserRepo(db *gorm.DB) *UserRepo {
+func NewUserRepo(db *gorm.DB) UserRepo {
 
-	return &UserRepo{db: db}
+	return &userRepo{db: db}
 }
 
-func (repo *UserRepo) FindUserByEmail(email string) (*model.User, error) {
+func (repo *userRepo) FindUserByEmail(email string) (*model.User, error) {
 	var user model.User
 
 	err := repo.db.Where("email = ?", email).First(&user).Error
@@ -34,7 +34,7 @@ func (repo *UserRepo) FindUserByEmail(email string) (*model.User, error) {
 	return &user, nil
 }
 
-func (repo *UserRepo) FindUserById(id uuid.UUID) (*model.User, error) {
+func (repo *userRepo) FindUserById(id uuid.UUID) (*model.User, error) {
 	var user model.User
 	err := repo.db.Where("id = ?", id).First(&user).Error
 	if err != nil {
@@ -43,7 +43,7 @@ func (repo *UserRepo) FindUserById(id uuid.UUID) (*model.User, error) {
 	return &user, nil
 }
 
-func (repo *UserRepo) FindAllUsers() ([]model.User, error) {
+func (repo *userRepo) FindAllUsers() ([]model.User, error) {
 	var users []model.User
 	if err := repo.db.Find(&users).Error; err != nil {
 		return nil, err
@@ -51,7 +51,7 @@ func (repo *UserRepo) FindAllUsers() ([]model.User, error) {
 	return users, nil
 }
 
-func (repo *UserRepo) CreateUser(firstName, lastName, email, password string) (*model.User, error) {
+func (repo *userRepo) CreateUser(firstName, lastName, email, password string) (*model.User, error) {
 	user := &model.User{
 		FirstName: firstName,
 		LastName:  lastName,
@@ -66,10 +66,10 @@ func (repo *UserRepo) CreateUser(firstName, lastName, email, password string) (*
 	return user, nil
 }
 
-func (repo *UserRepo) UpdateUser(user *model.User) error {
+func (repo *userRepo) UpdateUser(user *model.User) error {
 	return repo.db.Save(user).Error
 }
 
-func (repo *UserRepo) DeleteUser(id uuid.UUID) error {
+func (repo *userRepo) DeleteUser(id uuid.UUID) error {
 	return repo.db.Delete(&model.User{}, id).Error
 }

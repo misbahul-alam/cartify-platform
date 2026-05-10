@@ -9,7 +9,7 @@ import (
 )
 
 type AuthService struct {
-	repo repository.UserRepository
+	repo repository.UserRepo
 	jwt  *auth.JWTManager
 }
 
@@ -18,7 +18,7 @@ type TokenResponse struct {
 	RefreshToken string `json:"refresh_token"`
 }
 
-func NewAuthService(repo repository.UserRepository, jwt *auth.JWTManager) *AuthService {
+func NewAuthService(repo repository.UserRepo, jwt *auth.JWTManager) *AuthService {
 	return &AuthService{repo: repo, jwt: jwt}
 }
 

@@ -2,11 +2,11 @@ package repository
 
 import "gorm.io/gorm"
 
-type ProductRepository interface{}
-type ProductRepo struct {
+type ProductRepo interface{}
+type productRepo struct {
 	db *gorm.DB
 }
 
-func NewProductRepo(db *gorm.DB) *ProductRepo {
-	return &ProductRepo{db: db}
+func NewProductRepo(db *gorm.DB) ProductRepo {
+	return &productRepo{db: db}
 }
