@@ -22,7 +22,7 @@ func (Category) TableName() string {
 	return "categories"
 }
 
-func FromDomain(c *domain.Category) *Category {
+func CategoryFromDomain(c *domain.Category) *Category {
 	return &Category{
 		ID:          c.ID,
 		Name:        c.Name,
@@ -35,7 +35,7 @@ func FromDomain(c *domain.Category) *Category {
 	}
 }
 
-func (c *Category) ToDomain() *domain.Category {
+func (c *Category) CategoryToDomain() *domain.Category {
 	return &domain.Category{
 		ID:          c.ID,
 		Name:        c.Name,

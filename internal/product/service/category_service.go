@@ -5,10 +5,10 @@ import (
 	"github.com/misbahul-alam/cartify-platform/internal/product/domain"
 	"github.com/misbahul-alam/cartify-platform/internal/product/repository"
 )
-
 type CategoryService interface {
-	GetAll() ([]*domain.Category, error)
+	GetAll(page, limit int) ([]*domain.Category, int64, error)
 	GetByID(id uuid.UUID) (*domain.Category, error)
+	GetBySlug(slug string) (*domain.Category, error)
 	Create(name, slug, description string, parentID *uuid.UUID) error
 	Update(id uuid.UUID, name, slug, description string, status domain.Status, parentID *uuid.UUID) error
 	Delete(id uuid.UUID) error
@@ -19,15 +19,20 @@ type categoryService struct {
 }
 
 func NewCategoryService(repo repository.CategoryRepo) CategoryService {
-	return &categoryService{repo: repo}
+	return &categoryService{
+		repo: repo,
+	}
 }
 
-func (s *categoryService) GetAll() ([]*domain.Category, error) {
-	return s.repo.GetAll()
+func (s *categoryService) GetAll(page, limit int) ([]*domain.Category, int64, error) {
+	return s.repo.GetAll(page, limit)
 }
-
 func (s *categoryService) GetByID(id uuid.UUID) (*domain.Category, error) {
 	return s.repo.GetByID(id)
+}
+
+func (s *categoryService) GetBySlug(slug string) (*domain.Category, error) {
+	return s.repo.GetBySlug(slug)
 }
 
 func (s *categoryService) Create(name, slug, description string, parentID *uuid.UUID) error {

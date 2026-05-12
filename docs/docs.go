@@ -537,10 +537,6 @@ const docTemplate = `{
         },
         "dto.UpdateProfileRequest": {
             "type": "object",
-            "required": [
-                "first_name",
-                "last_name"
-            ],
             "properties": {
                 "first_name": {
                     "type": "string",

@@ -9,8 +9,9 @@ import (
 
 type CategoryRepo interface {
 	Create(category *domain.Category) error
-	GetAll() ([]*domain.Category, error)
+	GetAll(page, limit int) ([]*domain.Category, int64, error)
 	GetByID(id uuid.UUID) (*domain.Category, error)
+	GetBySlug(slug string) (*domain.Category, error)
 	Update(category *domain.Category) error
 	Delete(id uuid.UUID) error
 }
@@ -26,24 +27,29 @@ func NewCategoryRepo(db *gorm.DB) CategoryRepo {
 }
 
 func (r *categoryRepo) Create(category *domain.Category) error {
-	m := model.FromDomain(category)
+	m := model.CategoryFromDomain(category)
 	return r.db.Create(m).Error
 }
 
-func (r *categoryRepo) GetAll() ([]*domain.Category, error) {
+func (r *categoryRepo) GetAll(page, limit int) ([]*domain.Category, int64, error) {
 	var categories []*model.Category
+	var total int64
 
-	err := r.db.Find(&categories).Error
+	db := r.db.Model(&model.Category{})
+	db.Count(&total)
+
+	offset := (page - 1) * limit
+	err := db.Offset(offset).Limit(limit).Find(&categories).Error
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
 	domainCategories := make([]*domain.Category, len(categories))
 	for i, c := range categories {
-		domainCategories[i] = c.ToDomain()
+		domainCategories[i] = c.CategoryToDomain()
 	}
 
-	return domainCategories, nil
+	return domainCategories, total, nil
 }
 
 func (r *categoryRepo) GetByID(id uuid.UUID) (*domain.Category, error) {
@@ -54,11 +60,22 @@ func (r *categoryRepo) GetByID(id uuid.UUID) (*domain.Category, error) {
 		return nil, err
 	}
 
-	return category.ToDomain(), nil
+	return category.CategoryToDomain(), nil
+}
+
+func (r *categoryRepo) GetBySlug(slug string) (*domain.Category, error) {
+	var category model.Category
+
+	err := r.db.First(&category, "slug = ?", slug).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return category.CategoryToDomain(), nil
 }
 
 func (r *categoryRepo) Update(category *domain.Category) error {
-	m := model.FromDomain(category)
+	m := model.CategoryFromDomain(category)
 	return r.db.Save(m).Error
 }
 

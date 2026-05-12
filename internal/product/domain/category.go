@@ -16,14 +16,14 @@ const (
 )
 
 type Category struct {
-	ID          uuid.UUID
-	Name        string
-	Slug        string
-	Description string
-	ParentID    *uuid.UUID
-	Status      Status
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+	ID          uuid.UUID  `json:"id"`
+	Name        string     `json:"name"`
+	Slug        string     `json:"slug"`
+	Description string     `json:"description"`
+	ParentID    *uuid.UUID `json:"parent_id,omitempty"`
+	Status      Status     `json:"status"`
+	CreatedAt   time.Time  `json:"created_at"`
+	UpdatedAt   time.Time  `json:"updated_at"`
 }
 
 func NewCategory(name, slug, description string, parentID *uuid.UUID) (*Category, error) {

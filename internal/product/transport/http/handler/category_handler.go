@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -21,7 +22,10 @@ func NewCategoryHandler(service service.CategoryService) *CategoryHandler {
 }
 
 func (h *CategoryHandler) GetAll(c *gin.Context) {
-	categories, err := h.service.GetAll()
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
+
+	categories, total, err := h.service.GetAll(page, limit)
 	if err != nil {
 		response.NotFound(c, "Category Not Found")
 		return
@@ -29,6 +33,11 @@ func (h *CategoryHandler) GetAll(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"data":    categories,
 		"success": true,
+		"meta": gin.H{
+			"page":  page,
+			"limit": limit,
+			"total": total,
+		},
 	})
 }
 func (h *CategoryHandler) GetById(c *gin.Context) {
@@ -49,6 +58,19 @@ func (h *CategoryHandler) GetById(c *gin.Context) {
 		"success": true,
 	})
 }
+func (h *CategoryHandler) GetBySlug(c *gin.Context) {
+	slug := c.Param("slug")
+	category, err := h.service.GetBySlug(slug)
+	if err != nil {
+		response.NotFound(c, "Category Not Found")
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"data":    category,
+		"success": true,
+	})
+}
+
 func (h *CategoryHandler) Create(c *gin.Context) {
 	var req dto.CreateCategoryRequest
 	if err := c.ShouldBind(&req); err != nil {

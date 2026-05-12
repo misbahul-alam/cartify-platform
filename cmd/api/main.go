@@ -52,7 +52,8 @@ func main() {
 	if err := db.AutoMigrate(
 		&userModel.User{},
 		&productModel.Category{},
-		&productModel.Product{}); err != nil {
+		&productModel.Product{},
+		&productModel.ProductImage{}); err != nil {
 		log.Fatalf("failed to migrate database: %v", err)
 	}
 
