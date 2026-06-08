@@ -15,6 +15,11 @@ type Config struct {
 		URL string
 	}
 
+	Redis struct {
+		Addr string
+		TTL  time.Duration
+	}
+
 	JWT struct {
 		Secret string
 		TTL    time.Duration
@@ -48,6 +53,16 @@ func Load() *Config {
 	}
 
 	cfg.DB.URL = v.GetString("DB_URL")
+	cfg.Redis.Addr = v.GetString("REDIS_URL")
+	v.SetDefault("CART_TTL", "336h") // 14 days
+
+	cartDuration, err := time.ParseDuration(v.GetString("CART_TTL"))
+	if err != nil {
+		log.Printf("Invalid CART_TTL, using default 14 days: %v", err)
+		cartDuration = 14 * 24 * time.Hour
+	}
+	cfg.Redis.TTL = cartDuration
+
 	cfg.JWT.Secret = v.GetString("JWT_SECRET")
 
 	cfg.Cloudinary.CloudName = v.GetString("CLOUDINARY_CLOUD_NAME")

@@ -12,8 +12,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/misbahul-alam/cartify-platform/docs"
+	"github.com/misbahul-alam/cartify-platform/infra/cache"
 	"github.com/misbahul-alam/cartify-platform/infra/config"
 	"github.com/misbahul-alam/cartify-platform/infra/database"
+	cartHttp "github.com/misbahul-alam/cartify-platform/internal/cart/transport/http"
 	productModel "github.com/misbahul-alam/cartify-platform/internal/product/model"
 	productHttp "github.com/misbahul-alam/cartify-platform/internal/product/transport/http"
 	userModel "github.com/misbahul-alam/cartify-platform/internal/user/model"
@@ -46,6 +48,7 @@ func main() {
 	}
 
 	db := database.NewPostgres(cfg.DB.URL, cfg.AppEnv)
+	redisClient := cache.NewRedisCache(cfg.Redis.Addr)
 
 	db.Exec(`CREATE EXTENSION IF NOT EXISTS "pgcrypto"`)
 
@@ -65,7 +68,7 @@ func main() {
 	api := r.Group("/api/v1")
 	userHttp.Routes(api, db, cfg)
 	productHttp.Routes(api, db, cfg)
-
+	cartHttp.Routes(api, db, redisClient, cfg)
 	srv := &http.Server{
 		Addr:    ":" + cfg.ServerPort,
 		Handler: r,

@@ -5,6 +5,43 @@ definitions:
       access_token:
         type: string
     type: object
+  dto.CartItemRequest:
+    properties:
+      product_id:
+        type: string
+      quantity:
+        type: integer
+    required:
+    - product_id
+    - quantity
+    type: object
+  dto.CartItemResponse:
+    properties:
+      product:
+        $ref: '#/definitions/dto.ProductResponse'
+      quantity:
+        type: integer
+      subtotal:
+        type: number
+    type: object
+  dto.CartResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/dto.CartItemResponse'
+        type: array
+      total_price:
+        type: number
+      user_id:
+        type: string
+    type: object
+  dto.ImageResponse:
+    properties:
+      is_primary:
+        type: boolean
+      url:
+        type: string
+    type: object
   dto.LoginRequest:
     properties:
       email:
@@ -16,6 +53,25 @@ definitions:
     required:
     - email
     - password
+    type: object
+  dto.ProductResponse:
+    properties:
+      description:
+        type: string
+      id:
+        type: string
+      images:
+        items:
+          $ref: '#/definitions/dto.ImageResponse'
+        type: array
+      name:
+        type: string
+      price:
+        type: number
+      sku:
+        type: string
+      slug:
+        type: string
     type: object
   dto.RefreshRequest:
     properties:
@@ -229,6 +285,183 @@ paths:
       summary: User Registration
       tags:
       - Auth
+  /cart:
+    delete:
+      consumes:
+      - application/json
+      description: Delete all items from the authenticated user's cart.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully cleared cart.
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: 'Unauthorized: Missing or invalid authentication token.'
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal server error.
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Clear Entire Cart
+      tags:
+      - Cart
+    get:
+      consumes:
+      - application/json
+      description: Retrieve all items in the currently authenticated user's cart.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved cart.
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.CartResponse'
+              type: object
+        "401":
+          description: 'Unauthorized: Missing or invalid authentication token.'
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal server error.
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Get Current User Cart
+      tags:
+      - Cart
+  /cart/items:
+    post:
+      consumes:
+      - application/json
+      description: Add a product to the authenticated user's cart (increments quantity
+        if already in cart).
+      parameters:
+      - description: Product details to add
+        in: body
+        name: item
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CartItemRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully added item, returns updated cart.
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.CartResponse'
+              type: object
+        "400":
+          description: Invalid request payload or validation error.
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: 'Unauthorized: Missing or invalid authentication token.'
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal server error.
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Add Item to Cart
+      tags:
+      - Cart
+    put:
+      consumes:
+      - application/json
+      description: Set the exact quantity of a product in the authenticated user's
+        cart.
+      parameters:
+      - description: Product details to update
+        in: body
+        name: item
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CartItemRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully updated item, returns updated cart.
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.CartResponse'
+              type: object
+        "400":
+          description: Invalid request payload or validation error.
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: 'Unauthorized: Missing or invalid authentication token.'
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal server error.
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Update Cart Item Quantity
+      tags:
+      - Cart
+  /cart/items/{product_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove a product completely from the authenticated user's cart.
+      parameters:
+      - description: Product UUID
+        in: path
+        name: product_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully removed item, returns updated cart.
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.CartResponse'
+              type: object
+        "400":
+          description: Invalid product id format.
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: 'Unauthorized: Missing or invalid authentication token.'
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal server error.
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Remove Item from Cart
+      tags:
+      - Cart
   /users:
     delete:
       consumes:
