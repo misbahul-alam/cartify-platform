@@ -16,6 +16,8 @@ import (
 	"github.com/misbahul-alam/cartify-platform/infra/config"
 	"github.com/misbahul-alam/cartify-platform/infra/database"
 	cartHttp "github.com/misbahul-alam/cartify-platform/internal/cart/transport/http"
+	orderModel "github.com/misbahul-alam/cartify-platform/internal/order/model"
+	orderHttp "github.com/misbahul-alam/cartify-platform/internal/order/transport/http"
 	productModel "github.com/misbahul-alam/cartify-platform/internal/product/model"
 	productHttp "github.com/misbahul-alam/cartify-platform/internal/product/transport/http"
 	userModel "github.com/misbahul-alam/cartify-platform/internal/user/model"
@@ -56,7 +58,9 @@ func main() {
 		&userModel.User{},
 		&productModel.Category{},
 		&productModel.Product{},
-		&productModel.ProductImage{}); err != nil {
+		&productModel.ProductImage{},
+		&orderModel.Order{},
+		&orderModel.OrderItem{}); err != nil {
 		log.Fatalf("failed to migrate database: %v", err)
 	}
 
@@ -69,6 +73,7 @@ func main() {
 	userHttp.Routes(api, db, cfg)
 	productHttp.Routes(api, db, cfg)
 	cartHttp.Routes(api, db, redisClient, cfg)
+	orderHttp.Routes(api, db, redisClient, cfg)
 	srv := &http.Server{
 		Addr:    ":" + cfg.ServerPort,
 		Handler: r,

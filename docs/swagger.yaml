@@ -35,6 +35,13 @@ definitions:
       user_id:
         type: string
     type: object
+  dto.CreateOrderRequest:
+    properties:
+      shipping_address:
+        type: string
+    required:
+    - shipping_address
+    type: object
   dto.ImageResponse:
     properties:
       is_primary:
@@ -53,6 +60,55 @@ definitions:
     required:
     - email
     - password
+    type: object
+  dto.OrderItemResponse:
+    properties:
+      id:
+        type: string
+      product_id:
+        type: string
+      product_name:
+        type: string
+      product_price:
+        type: number
+      quantity:
+        type: integer
+      subtotal:
+        type: number
+    type: object
+  dto.OrderResponse:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      items:
+        items:
+          $ref: '#/definitions/dto.OrderItemResponse'
+        type: array
+      shipping_address:
+        type: string
+      status:
+        type: string
+      total_price:
+        type: number
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    type: object
+  dto.PaginatedOrdersResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/dto.OrderResponse'
+        type: array
+      limit:
+        type: integer
+      page:
+        type: integer
+      total:
+        type: integer
     type: object
   dto.ProductResponse:
     properties:
@@ -128,6 +184,13 @@ definitions:
       last_name:
         maxLength: 30
         type: string
+    type: object
+  dto.UpdateStatusRequest:
+    properties:
+      status:
+        type: string
+    required:
+    - status
     type: object
   model.Role:
     enum:
@@ -462,6 +525,272 @@ paths:
       summary: Remove Item from Cart
       tags:
       - Cart
+  /orders:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of paginated orders for the authenticated user.
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Page limit
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved orders list.
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.PaginatedOrdersResponse'
+              type: object
+        "401":
+          description: 'Unauthorized: Missing or invalid authentication token.'
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal server error.
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: List User Orders
+      tags:
+      - Orders
+    post:
+      consumes:
+      - application/json
+      description: Checkout the items in the cart and create a pending order.
+      parameters:
+      - description: Shipping address details
+        in: body
+        name: order
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successfully created order.
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.OrderResponse'
+              type: object
+        "400":
+          description: Invalid request payload or empty cart.
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: 'Unauthorized: Missing or invalid authentication token.'
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal server error.
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Create Order from Cart
+      tags:
+      - Orders
+  /orders/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve details of a specific order.
+      parameters:
+      - description: Order UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved order.
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.OrderResponse'
+              type: object
+        "400":
+          description: Invalid order ID format.
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: 'Unauthorized: Missing or invalid authentication token.'
+          schema:
+            $ref: '#/definitions/response.Response'
+        "403":
+          description: 'Forbidden: Not allowed to access this order.'
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Order not found.
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal server error.
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Get Order by ID
+      tags:
+      - Orders
+  /orders/{id}/cancel:
+    put:
+      consumes:
+      - application/json
+      description: Cancel a pending or processing order.
+      parameters:
+      - description: Order UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully cancelled order.
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Invalid order ID format or cannot cancel.
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: 'Unauthorized: Missing or invalid authentication token.'
+          schema:
+            $ref: '#/definitions/response.Response'
+        "403":
+          description: 'Forbidden: Not authorized to cancel this order.'
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Order not found.
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal server error.
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Cancel Order
+      tags:
+      - Orders
+  /orders/{id}/status:
+    put:
+      consumes:
+      - application/json
+      description: Update the status of an order.
+      parameters:
+      - description: Order UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: New status value
+        in: body
+        name: status
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateStatusRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully updated order status.
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Invalid status or transitions.
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: 'Unauthorized: Missing or invalid authentication token.'
+          schema:
+            $ref: '#/definitions/response.Response'
+        "403":
+          description: 'Forbidden: Admins/Sellers only.'
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Order not found.
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal server error.
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Update Order Status (Admin/Seller)
+      tags:
+      - Orders
+  /orders/all:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a paginated list of all orders.
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Page limit
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved all orders.
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.PaginatedOrdersResponse'
+              type: object
+        "401":
+          description: 'Unauthorized: Missing or invalid authentication token.'
+          schema:
+            $ref: '#/definitions/response.Response'
+        "403":
+          description: 'Forbidden: Admins/Sellers only.'
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal server error.
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: List All Orders (Admin/Seller)
+      tags:
+      - Orders
   /users:
     delete:
       consumes:
