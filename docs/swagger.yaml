@@ -35,6 +35,53 @@ definitions:
       user_id:
         type: string
     type: object
+  dto.CategoryUpdateRequest:
+    properties:
+      description:
+        maxLength: 100
+        minLength: 3
+        type: string
+      name:
+        maxLength: 35
+        minLength: 3
+        type: string
+      parent_id:
+        type: string
+      slug:
+        maxLength: 35
+        minLength: 3
+        type: string
+      status:
+        enum:
+        - public
+        - private
+        type: string
+    required:
+    - description
+    - name
+    - slug
+    type: object
+  dto.CreateCategoryRequest:
+    properties:
+      description:
+        maxLength: 100
+        minLength: 3
+        type: string
+      name:
+        maxLength: 35
+        minLength: 3
+        type: string
+      parent_id:
+        type: string
+      slug:
+        maxLength: 35
+        minLength: 3
+        type: string
+    required:
+    - description
+    - name
+    - slug
+    type: object
   dto.CreateOrderRequest:
     properties:
       shipping_address:
@@ -58,6 +105,35 @@ definitions:
         type: string
       transaction_id:
         type: string
+    type: object
+  dto.CreateProductRequest:
+    properties:
+      category_id:
+        type: string
+      description:
+        type: string
+      is_featured:
+        type: boolean
+      is_stock:
+        type: boolean
+      name:
+        maxLength: 255
+        minLength: 3
+        type: string
+      price:
+        minimum: 0
+        type: number
+      sku:
+        type: string
+      slug:
+        type: string
+    required:
+    - category_id
+    - description
+    - name
+    - price
+    - sku
+    - slug
     type: object
   dto.ImageResponse:
     properties:
@@ -145,6 +221,39 @@ definitions:
         type: string
       slug:
         type: string
+    type: object
+  dto.ProductUpdateRequest:
+    properties:
+      category_id:
+        type: string
+      description:
+        type: string
+      is_featured:
+        type: boolean
+      is_stock:
+        type: boolean
+      name:
+        maxLength: 255
+        minLength: 3
+        type: string
+      price:
+        minimum: 0
+        type: number
+      sku:
+        type: string
+      slug:
+        type: string
+      status:
+        enum:
+        - active
+        - inactive
+        - draft
+        type: string
+    required:
+    - name
+    - price
+    - sku
+    - status
     type: object
   dto.RefreshRequest:
     properties:
@@ -542,6 +651,177 @@ paths:
       summary: Remove Item from Cart
       tags:
       - Cart
+  /categories:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all categories with pagination
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Limit per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get all categories
+      tags:
+      - categories
+    post:
+      consumes:
+      - application/json
+      description: Create a new category (Admin only)
+      parameters:
+      - description: Create Category Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateCategoryRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Create category
+      tags:
+      - categories
+  /categories/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a category by its UUID (Admin only)
+      parameters:
+      - description: Category ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Delete category
+      tags:
+      - categories
+    get:
+      consumes:
+      - application/json
+      description: Get details of a single category by its UUID
+      parameters:
+      - description: Category ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get category by ID
+      tags:
+      - categories
+    put:
+      consumes:
+      - application/json
+      description: Update category details by its UUID (Admin only)
+      parameters:
+      - description: Category ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update Category Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CategoryUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Update category
+      tags:
+      - categories
+  /categories/slug/{slug}:
+    get:
+      consumes:
+      - application/json
+      description: Get details of a single category by its URL slug
+      parameters:
+      - description: Category Slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get category by Slug
+      tags:
+      - categories
   /orders:
     get:
       consumes:
@@ -879,6 +1159,285 @@ paths:
       summary: Stripe Webhook
       tags:
       - Payments
+  /products:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all products with pagination
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Limit per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get all products
+      tags:
+      - products
+    post:
+      consumes:
+      - application/json
+      description: Create a new product (Admin only)
+      parameters:
+      - description: Create Product Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateProductRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Create product
+      tags:
+      - products
+  /products/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a product by its UUID (Admin only)
+      parameters:
+      - description: Product ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Delete product
+      tags:
+      - products
+    get:
+      consumes:
+      - application/json
+      description: Get details of a single product by its UUID
+      parameters:
+      - description: Product ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get product by ID
+      tags:
+      - products
+    put:
+      consumes:
+      - application/json
+      description: Update product details by its UUID (Admin only)
+      parameters:
+      - description: Product ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update Product Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ProductUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Update product
+      tags:
+      - products
+  /products/{id}/images:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Upload an image file for a product (Admin only)
+      parameters:
+      - description: Product ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Product Image file
+        in: formData
+        name: image
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Upload product image
+      tags:
+      - products
+  /products/{id}/images/{image_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an image from a product by its UUID (Admin only)
+      parameters:
+      - description: Product ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Image ID (UUID)
+        in: path
+        name: image_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Delete product image
+      tags:
+      - products
+  /products/{id}/images/{image_id}/primary:
+    patch:
+      consumes:
+      - application/json
+      description: Set an image as the primary cover image for a product (Admin only)
+      parameters:
+      - description: Product ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Image ID (UUID)
+        in: path
+        name: image_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Set primary image
+      tags:
+      - products
+  /products/slug/{slug}:
+    get:
+      consumes:
+      - application/json
+      description: Get details of a single product by its URL slug
+      parameters:
+      - description: Product Slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get product by Slug
+      tags:
+      - products
   /users:
     delete:
       consumes:

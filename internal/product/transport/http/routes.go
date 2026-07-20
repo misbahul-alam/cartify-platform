@@ -31,6 +31,7 @@ func Routes(r *gin.RouterGroup, db *gorm.DB, config *config.Config) {
 		categoryRoute.GET("/", categoryHandler.GetAll)
 		categoryRoute.GET("/:id", categoryHandler.GetById)
 		categoryRoute.GET("/slug/:slug", categoryHandler.GetBySlug)
+		categoryRoute.POST("", middleware.AuthMiddleware(config), middleware.RoleMiddleware("admin"), categoryHandler.Create)
 		categoryRoute.POST("/", middleware.AuthMiddleware(config), middleware.RoleMiddleware("admin"), categoryHandler.Create)
 		categoryRoute.PUT("/:id", middleware.AuthMiddleware(config), middleware.RoleMiddleware("admin"), categoryHandler.Update)
 		categoryRoute.DELETE("/:id", middleware.AuthMiddleware(config), middleware.RoleMiddleware("admin"), categoryHandler.Delete)

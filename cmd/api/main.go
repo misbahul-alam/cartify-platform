@@ -24,6 +24,7 @@ import (
 	productHttp "github.com/misbahul-alam/cartify-platform/internal/product/transport/http"
 	userModel "github.com/misbahul-alam/cartify-platform/internal/user/model"
 	userHttp "github.com/misbahul-alam/cartify-platform/internal/user/transport/http"
+	"github.com/misbahul-alam/cartify-platform/internal/shared/middleware"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
@@ -68,7 +69,9 @@ func main() {
 	}
 
 	r := gin.New()
-	r.Use(gin.Logger(), gin.Recovery())
+	r.Use(gin.Logger(), gin.Recovery(), middleware.CORSMiddleware())
+
+	r.OPTIONS("/*any", func(c *gin.Context) {})
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 

@@ -21,6 +21,17 @@ func NewCategoryHandler(service service.CategoryService) *CategoryHandler {
 	return &CategoryHandler{service}
 }
 
+// GetAll godoc
+// @Summary      Get all categories
+// @Description  Get a list of all categories with pagination
+// @Tags         categories
+// @Accept       json
+// @Produce      json
+// @Param        page   query     int  false  "Page number"
+// @Param        limit  query     int  false  "Limit per page"
+// @Success      200    {object}  response.Response
+// @Failure      404    {object}  response.Response
+// @Router       /categories [get]
 func (h *CategoryHandler) GetAll(c *gin.Context) {
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
@@ -40,6 +51,16 @@ func (h *CategoryHandler) GetAll(c *gin.Context) {
 		},
 	})
 }
+// GetById godoc
+// @Summary      Get category by ID
+// @Description  Get details of a single category by its UUID
+// @Tags         categories
+// @Accept       json
+// @Produce      json
+// @Param        id   path      string  true  "Category ID (UUID)"
+// @Success      200  {object}  response.Response
+// @Failure      404  {object}  response.Response
+// @Router       /categories/{id} [get]
 func (h *CategoryHandler) GetById(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := uuid.Parse(idParam)
@@ -58,6 +79,16 @@ func (h *CategoryHandler) GetById(c *gin.Context) {
 		"success": true,
 	})
 }
+// GetBySlug godoc
+// @Summary      Get category by Slug
+// @Description  Get details of a single category by its URL slug
+// @Tags         categories
+// @Accept       json
+// @Produce      json
+// @Param        slug  path      string  true  "Category Slug"
+// @Success      200   {object}  response.Response
+// @Failure      404   {object}  response.Response
+// @Router       /categories/slug/{slug} [get]
 func (h *CategoryHandler) GetBySlug(c *gin.Context) {
 	slug := c.Param("slug")
 	category, err := h.service.GetBySlug(slug)
@@ -71,6 +102,18 @@ func (h *CategoryHandler) GetBySlug(c *gin.Context) {
 	})
 }
 
+// Create godoc
+// @Summary      Create category
+// @Description  Create a new category (Admin only)
+// @Tags         categories
+// @Accept       json
+// @Produce      json
+// @Param        request  body      dto.CreateCategoryRequest  true  "Create Category Request"
+// @Success      201      {object}  response.Response
+// @Failure      400      {object}  response.Response
+// @Failure      500      {object}  response.Response
+// @Security     BearerAuth
+// @Router       /categories [post]
 func (h *CategoryHandler) Create(c *gin.Context) {
 	var req dto.CreateCategoryRequest
 	if err := c.ShouldBind(&req); err != nil {
@@ -92,6 +135,19 @@ func (h *CategoryHandler) Create(c *gin.Context) {
 		"message": "Category Created",
 	})
 }
+// Update godoc
+// @Summary      Update category
+// @Description  Update category details by its UUID (Admin only)
+// @Tags         categories
+// @Accept       json
+// @Produce      json
+// @Param        id       path      string                     true  "Category ID (UUID)"
+// @Param        request  body      dto.CategoryUpdateRequest  true  "Update Category Request"
+// @Success      200      {object}  response.Response
+// @Failure      400      {object}  response.Response
+// @Failure      404      {object}  response.Response
+// @Security     BearerAuth
+// @Router       /categories/{id} [put]
 func (h *CategoryHandler) Update(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := uuid.Parse(idParam)
@@ -121,6 +177,17 @@ func (h *CategoryHandler) Update(c *gin.Context) {
 		"message": "Category Updated",
 	})
 }
+// Delete godoc
+// @Summary      Delete category
+// @Description  Delete a category by its UUID (Admin only)
+// @Tags         categories
+// @Accept       json
+// @Produce      json
+// @Param        id   path      string  true  "Category ID (UUID)"
+// @Success      200  {object}  response.Response
+// @Failure      404  {object}  response.Response
+// @Security     BearerAuth
+// @Router       /categories/{id} [delete]
 func (h *CategoryHandler) Delete(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := uuid.Parse(idParam)
