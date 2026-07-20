@@ -93,7 +93,6 @@ func (o *Order) Cancel() error {
 func (o *Order) UpdateStatus(newStatus OrderStatus) error {
 	switch newStatus {
 	case OrderStatusPending, OrderStatusProcessing, OrderStatusPaid, OrderStatusShipped, OrderStatusDelivered, OrderStatusCancelled:
-		// allowed status
 	default:
 		return ErrInvalidStatus
 	}

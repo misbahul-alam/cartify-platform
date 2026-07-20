@@ -31,6 +31,12 @@ type Config struct {
 		APISecret string
 		Folder    string
 	}
+
+	Stripe struct {
+		SecretKey     string
+		WebhookSecret string
+		Currency      string
+	}
 }
 
 func Load() *Config {
@@ -69,6 +75,11 @@ func Load() *Config {
 	cfg.Cloudinary.APIKey = v.GetString("CLOUDINARY_API_KEY")
 	cfg.Cloudinary.APISecret = v.GetString("CLOUDINARY_API_SECRET")
 	cfg.Cloudinary.Folder = v.GetString("CLOUDINARY_FOLDER")
+
+	cfg.Stripe.SecretKey = v.GetString("STRIPE_SECRET_KEY")
+	cfg.Stripe.WebhookSecret = v.GetString("STRIPE_WEBHOOK_SECRET")
+	v.SetDefault("STRIPE_CURRENCY", "usd")
+	cfg.Stripe.Currency = v.GetString("STRIPE_CURRENCY")
 
 	duration, err := time.ParseDuration(v.GetString("JWT_TTL"))
 	if err != nil {

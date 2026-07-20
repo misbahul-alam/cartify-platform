@@ -22,8 +22,7 @@ func Success(c *gin.Context, status int, message string, data interface{}) {
 }
 
 func Error(c *gin.Context, status int, message string, errors interface{}) {
-	// If it's a single string error, wrap it in a slice for consistency or keep it as is
-	// Standard practice: "errors" should ideally be an object or list of objects
+
 	c.JSON(status, Response{
 		Success: false,
 		Message: message,
