@@ -42,6 +42,23 @@ definitions:
     required:
     - shipping_address
     type: object
+  dto.CreatePaymentIntentRequest:
+    properties:
+      order_id:
+        type: string
+      provider:
+        type: string
+    required:
+    - order_id
+    - provider
+    type: object
+  dto.CreatePaymentIntentResponse:
+    properties:
+      client_secret:
+        type: string
+      transaction_id:
+        type: string
+    type: object
   dto.ImageResponse:
     properties:
       is_primary:
@@ -791,6 +808,77 @@ paths:
       summary: List All Orders (Admin/Seller)
       tags:
       - Orders
+  /payments/intent:
+    post:
+      consumes:
+      - application/json
+      description: Create a payment intent for a pending order
+      parameters:
+      - description: Payment creation details
+        in: body
+        name: payment
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreatePaymentIntentRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successfully created payment intent.
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.CreatePaymentIntentResponse'
+              type: object
+        "400":
+          description: Invalid request payload or order already paid.
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: 'Unauthorized: Missing or invalid authentication token.'
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal server error.
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Create Payment Intent
+      tags:
+      - Payments
+  /payments/webhook/stripe:
+    post:
+      consumes:
+      - application/json
+      description: Handle Stripe webhook events to update payment status
+      parameters:
+      - description: Webhook payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Stripe Webhook
+      tags:
+      - Payments
   /users:
     delete:
       consumes:
