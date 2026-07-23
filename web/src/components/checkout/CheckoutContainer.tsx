@@ -1,52 +1,34 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
-import {
-  MapPin,
-  CreditCard,
-  CheckCircle,
-  AlertCircle,
-  ArrowRight,
-} from "lucide-react";
+import { CheckCircle, AlertCircle, ArrowRight } from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
 import type { Order } from "@/types";
-import { api } from "@/lib/axios";
-import { Breadcrumb, Button, Input, Textarea } from "@/components/ui";
+import { useOrdersStore } from "@/store/useOrdersStore";
+import { Elements } from "@stripe/react-stripe-js";
+import { stripePromise } from "@/lib/stripe";
+import { Breadcrumb, Button } from "@/components/ui";
+import ShippingDetails from "./ShippingDetails";
+import SummaryDetails from "./SummaryDetails";
+import PaymentForm from "./PaymentForm";
 import { useAuthStore } from "@/store/useAuthStore";
 
 export const CheckoutContainer: React.FC = () => {
   const user = useAuthStore((state) => state.user);
   console.log("CheckoutContainer user:", user);
   const { items, totalPrice, clearCart, loading: cartLoading } = useCartStore();
-  const router = useRouter();
 
   const [shippingAddress, setShippingAddress] = useState("");
-  const [cardNumber, setCardNumber] = useState("4242 4242 4242 4242");
-  const [expiry, setExpiry] = useState("12/28");
-  const [cvv, setCvv] = useState("123");
-  const [cardName, setCardName] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successOrder, setSuccessOrder] = useState<Order | null>(null);
   const [paymentMsg, setPaymentMsg] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!user) {
-      router.push("/signin?redirect=/checkout");
-    } else {
-      setCardName(`${user.data.first_name} ${user.data.last_name}`);
-    }
-  }, [user]);
-
-  useEffect(() => {
-    if (!cartLoading && items.length === 0 && !successOrder) {
-      router.push("/cart");
-    }
-  }, [items, cartLoading, successOrder]);
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const createOrder = useOrdersStore((s) => s.createOrder);
+  const createPaymentIntent = useOrdersStore((s) => s.createPaymentIntent);
 
   const shippingCost = totalPrice >= 100 ? 0 : 9.99;
   const finalTotal = totalPrice + shippingCost;
@@ -57,27 +39,28 @@ export const CheckoutContainer: React.FC = () => {
     setLoading(true);
 
     try {
-      const orderRes = await api.post("/orders", {
+      const createdOrder = await createOrder({
         shipping_address: shippingAddress,
         items: items.map((item) => ({
           product_id: item.product.id,
           quantity: item.quantity,
         })),
       });
-      if (!orderRes.data || !orderRes.data.success) {
-        throw new Error(orderRes.data?.message || "Failed to create order");
-      }
 
-      const createdOrder = orderRes.data;
       setSuccessOrder(createdOrder);
 
       try {
-        const paymentRes = await api.post(`/payments/stripe-intent`, {
+        const paymentData = await createPaymentIntent({
           order_id: createdOrder.id,
-          amount: finalTotal,
-          currency: "usd",
+          provider: "stripe",
         });
-        if (paymentRes.data && paymentRes.data.success) {
+
+        if (paymentData && paymentData.client_secret) {
+          setClientSecret(paymentData.client_secret);
+          return;
+        }
+
+        if (paymentData) {
           setPaymentMsg("Payment authorized successfully via Stripe.");
         }
       } catch (payErr: any) {
@@ -119,6 +102,23 @@ export const CheckoutContainer: React.FC = () => {
             <div className="bg-indigo-50/50 p-4 rounded-xl border border-indigo-100/50 text-xs text-indigo-700 text-left dark:bg-indigo-950/20 dark:border-indigo-950/30 dark:text-indigo-400">
               <p className="font-semibold mb-1">Payment Status:</p>
               <p>{paymentMsg}</p>
+            </div>
+          )}
+
+          {clientSecret && (
+            <div className="mt-6 max-w-md mx-auto w-full">
+              <Elements stripe={stripePromise} options={{ clientSecret }}>
+                <PaymentForm
+                  clientSecret={clientSecret}
+                  amount={finalTotal}
+                  currency="USD"
+                  onSuccess={async (msg: string) => {
+                    setPaymentMsg(msg);
+                    await clearCart();
+                  }}
+                  onError={(errMsg: string) => setError(errMsg)}
+                />
+              </Elements>
             </div>
           )}
 
@@ -168,128 +168,19 @@ export const CheckoutContainer: React.FC = () => {
         className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start"
       >
         <div className="lg:col-span-2 space-y-6">
-          <div className="border border-zinc-200/80 rounded-2xl bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900 shadow-xs">
-            <div className="flex items-center gap-2 pb-4 mb-6 border-b border-zinc-100 dark:border-zinc-800 text-zinc-900 dark:text-zinc-50">
-              <MapPin className="h-5 w-5 text-indigo-650" />
-              <h2 className="text-xs font-bold uppercase tracking-wider">
-                Shipping Details
-              </h2>
-            </div>
-
-            <Textarea
-              id="address"
-              required
-              rows={3}
-              value={shippingAddress}
-              onChange={(e) => setShippingAddress(e.target.value)}
-              placeholder="123 Main St, Apt 4B, New York, NY 10001"
-              label="Full Shipping Address"
-              labelClassName="mb-2 text-[10px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500"
-            />
-          </div>
-
-          <div className="border border-zinc-200/80 rounded-2xl bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900 shadow-xs">
-            <div className="flex items-center gap-2 pb-4 mb-6 border-b border-zinc-100 dark:border-zinc-800 text-zinc-900 dark:text-zinc-50">
-              <CreditCard className="h-5 w-5 text-indigo-650" />
-              <h2 className="text-xs font-bold uppercase tracking-wider">
-                Payment Details (Stripe Simulator)
-              </h2>
-            </div>
-
-            <div className="space-y-4">
-              <Input
-                type="text"
-                required
-                value={cardName}
-                onChange={(e) => setCardName(e.target.value)}
-                label="Name on Card"
-                labelClassName="mb-2 text-[10px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500"
-              />
-
-              <Input
-                type="text"
-                required
-                value={cardNumber}
-                onChange={(e) => setCardNumber(e.target.value)}
-                label="Card Number"
-                labelClassName="mb-2 text-[10px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500"
-              />
-
-              <div className="grid grid-cols-2 gap-4">
-                <Input
-                  type="text"
-                  required
-                  value={expiry}
-                  onChange={(e) => setExpiry(e.target.value)}
-                  placeholder="MM/YY"
-                  label="Expiry Date"
-                  labelClassName="mb-2 text-[10px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500"
-                />
-                <Input
-                  type="text"
-                  required
-                  value={cvv}
-                  onChange={(e) => setCvv(e.target.value)}
-                  placeholder="123"
-                  label="CVV"
-                  labelClassName="mb-2 text-[10px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500"
-                />
-              </div>
-            </div>
-          </div>
+          <ShippingDetails
+            shippingAddress={shippingAddress}
+            setShippingAddress={setShippingAddress}
+          />
         </div>
 
         <div className="border border-zinc-200/80 rounded-2xl bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900 shadow-xs">
-          <h2 className="text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-50 mb-6 pb-4 border-b border-zinc-100 dark:border-zinc-800">
-            Summary Recap
-          </h2>
-
-          <div className="space-y-4 max-h-48 overflow-y-auto mb-6">
-            {items.map((item) => (
-              <div
-                key={item.product.id}
-                className="flex justify-between items-center text-xs gap-3"
-              >
-                <span className="text-zinc-700 dark:text-zinc-300 truncate max-w-[150px]">
-                  {item.product.name}{" "}
-                  <span className="text-zinc-400">x{item.quantity}</span>
-                </span>
-                <span className="font-semibold text-zinc-900 dark:text-zinc-50">
-                  ${item.subtotal.toFixed(2)}
-                </span>
-              </div>
-            ))}
-          </div>
-
-          <div className="space-y-4 pt-4 border-t border-zinc-100 dark:border-zinc-800">
-            <div className="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400">
-              <span>Items Total</span>
-              <span className="font-bold text-zinc-900 dark:text-zinc-50">
-                ${totalPrice.toFixed(2)}
-              </span>
-            </div>
-            <div className="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400">
-              <span>Shipping</span>
-              {shippingCost === 0 ? (
-                <span className="font-bold text-green-600 dark:text-green-400 uppercase text-[9px] tracking-wider">
-                  Free
-                </span>
-              ) : (
-                <span className="font-bold text-zinc-900 dark:text-zinc-50">
-                  ${shippingCost.toFixed(2)}
-                </span>
-              )}
-            </div>
-
-            <div className="border-t border-zinc-100 dark:border-zinc-800 pt-4 flex items-center justify-between">
-              <span className="text-xs font-bold text-zinc-900 dark:text-zinc-50">
-                Grand Total
-              </span>
-              <span className="text-xl font-extrabold text-zinc-955 dark:text-zinc-50">
-                ${finalTotal.toFixed(2)}
-              </span>
-            </div>
-          </div>
+          <SummaryDetails
+            items={items}
+            totalPrice={totalPrice}
+            shippingCost={shippingCost}
+            finalTotal={finalTotal}
+          />
 
           <Button
             type="submit"
