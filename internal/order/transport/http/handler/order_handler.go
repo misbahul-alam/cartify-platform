@@ -77,7 +77,10 @@ func (h *OrderHandler) GetOrder(c *gin.Context) {
 		return
 	}
 
-	role, _ := h.getUserRole(c)
+	role := h.getUserRole(c)
+	if role == "" {
+		return
+	}
 
 	orderIDStr := c.Param("id")
 	orderID, err := uuid.Parse(orderIDStr)
@@ -127,12 +130,11 @@ func (h *OrderHandler) ListUserOrders(c *gin.Context) {
 		return
 	}
 
-	response.Success(c, http.StatusOK, "Orders retrieved successfully", dto.PaginatedOrdersResponse{
-		Total: total,
+	response.Success(c, http.StatusOK, "Orders retrieved successfully", orders, &response.Pagination{
+		Total: int(total),
 		Page:  page,
 		Limit: limit,
-		Data:  h.toOrdersResponse(orders),
-	}, nil)
+	})
 }
 
 // ListAllOrders godoc
@@ -159,12 +161,11 @@ func (h *OrderHandler) ListAllOrders(c *gin.Context) {
 		return
 	}
 
-	response.Success(c, http.StatusOK, "All orders retrieved successfully", dto.PaginatedOrdersResponse{
-		Total: total,
+	response.Success(c, http.StatusOK, "All orders retrieved successfully", orders, &response.Pagination{
+		Total: int(total),
 		Page:  page,
 		Limit: limit,
-		Data:  h.toOrdersResponse(orders),
-	}, nil)
+	})
 }
 
 // CancelOrder godoc
@@ -188,7 +189,10 @@ func (h *OrderHandler) CancelOrder(c *gin.Context) {
 		return
 	}
 
-	role, _ := h.getUserRole(c)
+	role := h.getUserRole(c)
+	if role == "" {
+		return
+	}
 
 	orderIDStr := c.Param("id")
 	orderID, err := uuid.Parse(orderIDStr)
@@ -274,14 +278,6 @@ func (h *OrderHandler) toOrderResponse(o *domain.Order) *dto.OrderResponse {
 	}
 }
 
-func (h *OrderHandler) toOrdersResponse(orders []*domain.Order) []*dto.OrderResponse {
-	res := make([]*dto.OrderResponse, len(orders))
-	for i, o := range orders {
-		res[i] = h.toOrderResponse(o)
-	}
-	return res
-}
-
 func (h *OrderHandler) getUserID(c *gin.Context) (uuid.UUID, error) {
 	userID, ok := c.Get("user_id")
 	if !ok {
@@ -304,16 +300,18 @@ func (h *OrderHandler) getUserID(c *gin.Context) (uuid.UUID, error) {
 	return uid, nil
 }
 
-func (h *OrderHandler) getUserRole(c *gin.Context) (string, error) {
+func (h *OrderHandler) getUserRole(c *gin.Context) string {
 	role, ok := c.Get("role")
 	if !ok {
-		return "", errors.New("missing user role")
+		response.Unauthorized(c, "missing user role")
+		return ""
 	}
 
 	roleStr, ok := role.(string)
-	if !ok {
-		return "", errors.New("invalid user role")
+	if !ok || roleStr == "" {
+		response.Unauthorized(c, "invalid user role")
+		return ""
 	}
 
-	return roleStr, nil
+	return roleStr
 }
