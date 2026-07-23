@@ -79,7 +79,7 @@ func (h *PaymentHandler) CreatePaymentIntent(c *gin.Context) {
 	response.Success(c, http.StatusCreated, "Payment intent created successfully", dto.CreatePaymentIntentResponse{
 		ClientSecret:  output.ClientSecret,
 		TransactionID: output.TransactionID,
-	})
+	}, nil)
 }
 
 // StripeWebhook godoc

@@ -46,7 +46,7 @@ func (h *UserHandler) Me(c *gin.Context) {
 		return
 	}
 
-	response.Success(c, http.StatusOK, "User profile retrieved successfully", user)
+	response.Success(c, http.StatusOK, "User profile retrieved successfully", user, nil)
 }
 
 // GetAll godoc
@@ -66,7 +66,7 @@ func (h *UserHandler) GetAll(c *gin.Context) {
 		response.InternalServerError(c, err.Error())
 		return
 	}
-	response.Success(c, http.StatusOK, "Users retrieved successfully", users)
+	response.Success(c, http.StatusOK, "Users retrieved successfully", users, nil)
 }
 
 // UpdateProfile godoc
@@ -99,7 +99,7 @@ func (h *UserHandler) UpdateProfile(c *gin.Context) {
 		return
 	}
 
-	response.Success(c, http.StatusOK, "Profile updated successfully", user)
+	response.Success(c, http.StatusOK, "Profile updated successfully", user, nil)
 }
 
 // UpdatePassword godoc
@@ -131,7 +131,7 @@ func (h *UserHandler) UpdatePassword(c *gin.Context) {
 		return
 	}
 
-	response.Success(c, http.StatusOK, "Password updated successfully", nil)
+	response.Success(c, http.StatusOK, "Password updated successfully", nil, nil)
 }
 
 // Delete godoc
@@ -156,7 +156,7 @@ func (h *UserHandler) Delete(c *gin.Context) {
 		return
 	}
 
-	response.Success(c, http.StatusOK, "User deleted successfully", nil)
+	response.Success(c, http.StatusOK, "User deleted successfully", nil, nil)
 }
 
 func (h *UserHandler) getUserID(c *gin.Context) (uuid.UUID, error) {

@@ -42,7 +42,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		response.BadRequest(c, err.Error(), nil)
 		return
 	}
-	response.Success(c, http.StatusOK, "Login successful", gin.H{"access_token": res.AccessToken, "refresh_token": res.RefreshToken})
+	response.Success(c, http.StatusOK, "Login successful", gin.H{"access_token": res.AccessToken, "refresh_token": res.RefreshToken}, nil)
 }
 
 // Register godoc
@@ -68,7 +68,7 @@ func (h *AuthHandler) Register(c *gin.Context) {
 		response.BadRequest(c, err.Error(), nil)
 		return
 	}
-	response.Success(c, http.StatusCreated, "Registration successful", nil)
+	response.Success(c, http.StatusCreated, "Registration successful", nil, nil)
 }
 
 // RefreshToken godoc
@@ -95,5 +95,5 @@ func (h *AuthHandler) RefreshToken(c *gin.Context) {
 	}
 	response.Success(c, http.StatusOK, "Token refreshed successfully", gin.H{
 		"access_token": newToken,
-	})
+	}, nil)
 }

@@ -44,7 +44,7 @@ func (h *CartHandler) GetCart(c *gin.Context) {
 		return
 	}
 
-	response.Success(c, http.StatusOK, "Cart retrieved successfully", h.toCartResponse(cart))
+	response.Success(c, http.StatusOK, "Cart retrieved successfully", h.toCartResponse(cart), nil)
 }
 
 // AddItem godoc
@@ -79,7 +79,7 @@ func (h *CartHandler) AddItem(c *gin.Context) {
 		return
 	}
 
-	response.Success(c, http.StatusOK, "Item added to cart successfully", h.toCartResponse(cart))
+	response.Success(c, http.StatusOK, "Item added to cart successfully", h.toCartResponse(cart), nil)
 }
 
 // UpdateItem godoc
@@ -114,7 +114,7 @@ func (h *CartHandler) UpdateItem(c *gin.Context) {
 		return
 	}
 
-	response.Success(c, http.StatusOK, "Cart item updated successfully", h.toCartResponse(cart))
+	response.Success(c, http.StatusOK, "Cart item updated successfully", h.toCartResponse(cart), nil)
 }
 
 // RemoveItem godoc
@@ -150,7 +150,7 @@ func (h *CartHandler) RemoveItem(c *gin.Context) {
 		return
 	}
 
-	response.Success(c, http.StatusOK, "Item removed from cart successfully", h.toCartResponse(cart))
+	response.Success(c, http.StatusOK, "Item removed from cart successfully", h.toCartResponse(cart), nil)
 }
 
 // ClearCart godoc
@@ -176,7 +176,7 @@ func (h *CartHandler) ClearCart(c *gin.Context) {
 		return
 	}
 
-	response.Success(c, http.StatusOK, "Cart cleared successfully", nil)
+	response.Success(c, http.StatusOK, "Cart cleared successfully", nil, nil)
 }
 
 func (h *CartHandler) toCartResponse(cart *domain.CartDetail) dto.CartResponse {
@@ -248,4 +248,3 @@ func (h *CartHandler) getUserID(c *gin.Context) (uuid.UUID, error) {
 
 	return uid, nil
 }
-

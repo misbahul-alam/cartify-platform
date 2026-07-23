@@ -41,14 +41,11 @@ func (h *ProductHandler) GetAll(c *gin.Context) {
 		response.NotFound(c, "Product Not Found")
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{
-		"data":    products,
-		"success": true,
-		"meta": gin.H{
-			"page":  page,
-			"limit": limit,
-			"total": total,
-		},
+
+	response.Success(c, http.StatusOK, "Products retrieved successfully", products, &response.Pagination{
+		Total: int(total),
+		Page:  page,
+		Limit: limit,
 	})
 }
 
@@ -75,10 +72,8 @@ func (h *ProductHandler) GetById(c *gin.Context) {
 		response.NotFound(c, "Product Not Found")
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{
-		"data":    product,
-		"success": true,
-	})
+
+	response.Success(c, http.StatusOK, "Product retrieved successfully", product, nil)
 }
 
 // GetBySlug godoc
@@ -98,10 +93,8 @@ func (h *ProductHandler) GetBySlug(c *gin.Context) {
 		response.NotFound(c, "Product Not Found")
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{
-		"data":    product,
-		"success": true,
-	})
+
+	response.Success(c, http.StatusOK, "Product retrieved successfully", product, nil)
 }
 
 // Create godoc
@@ -125,17 +118,11 @@ func (h *ProductHandler) Create(c *gin.Context) {
 
 	err := h.service.Create(req.SKU, req.Name, req.Slug, req.Description, req.Price, req.CategoryID, req.IsStock, req.IsFeatured)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"success": false,
-			"message": err.Error(),
-		})
+		response.InternalServerError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{
-		"success": true,
-		"message": "Product Created",
-	})
+	response.Success(c, http.StatusCreated, "Product Created", nil, nil)
 }
 
 // Update godoc
@@ -170,10 +157,7 @@ func (h *ProductHandler) Update(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"success": true,
-		"message": "Product Updated",
-	})
+	response.Success(c, http.StatusOK, "Product Updated", nil, nil)
 }
 
 // Delete godoc
@@ -199,10 +183,7 @@ func (h *ProductHandler) Delete(c *gin.Context) {
 		response.NotFound(c, "Product Not Found")
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{
-		"success": true,
-		"message": "Product Deleted",
-	})
+	response.Success(c, http.StatusOK, "Product Deleted", nil, nil)
 }
 
 // UploadImage godoc
@@ -228,26 +209,19 @@ func (h *ProductHandler) UploadImage(c *gin.Context) {
 
 	file, err := c.FormFile("image")
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"success": false,
-			"message": "Image is required",
+		response.ValidationError(c, map[string]string{
+			"image": "Image is required",
 		})
 		return
 	}
 
 	err = h.service.UploadImage(c.Request.Context(), id, file)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"success": false,
-			"message": err.Error(),
-		})
+		response.InternalServerError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"success": true,
-		"message": "Image Uploaded",
-	})
+	response.Success(c, http.StatusOK, "Image Uploaded", nil, nil)
 }
 
 // DeleteImage godoc
@@ -280,17 +254,11 @@ func (h *ProductHandler) DeleteImage(c *gin.Context) {
 
 	err = h.service.DeleteImage(c.Request.Context(), productID, imageID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"success": false,
-			"message": err.Error(),
-		})
+		response.InternalServerError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"success": true,
-		"message": "Image Deleted",
-	})
+	response.Success(c, http.StatusOK, "Image Deleted", nil, nil)
 }
 
 // SetPrimaryImage godoc
@@ -323,15 +291,9 @@ func (h *ProductHandler) SetPrimaryImage(c *gin.Context) {
 
 	err = h.service.SetPrimaryImage(productID, imageID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"success": false,
-			"message": err.Error(),
-		})
+		response.InternalServerError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"success": true,
-		"message": "Primary Image Set",
-	})
+	response.Success(c, http.StatusOK, "Primary Image Set", nil, nil)
 }

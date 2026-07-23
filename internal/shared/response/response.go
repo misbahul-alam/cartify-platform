@@ -6,18 +6,26 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type Response struct {
-	Success bool        `json:"success"`
-	Message string      `json:"message"`
-	Data    interface{} `json:"data,omitempty"`
-	Errors  interface{} `json:"errors,omitempty"`
+type Pagination struct {
+	Total int `json:"total"`
+	Page  int `json:"page"`
+	Limit int `json:"limit"`
 }
 
-func Success(c *gin.Context, status int, message string, data interface{}) {
+type Response struct {
+	Success    bool        `json:"success"`
+	Message    string      `json:"message"`
+	Data       interface{} `json:"data,omitempty"`
+	Pagination *Pagination `json:"pagination,omitempty"`
+	Errors     interface{} `json:"errors,omitempty"`
+}
+
+func Success(c *gin.Context, status int, message string, data interface{}, pagination *Pagination) {
 	c.JSON(status, Response{
-		Success: true,
-		Message: message,
-		Data:    data,
+		Success:    true,
+		Message:    message,
+		Data:       data,
+		Pagination: pagination,
 	})
 }
 

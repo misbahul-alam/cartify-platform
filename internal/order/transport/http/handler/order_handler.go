@@ -53,7 +53,7 @@ func (h *OrderHandler) CreateOrder(c *gin.Context) {
 		return
 	}
 
-	response.Success(c, http.StatusCreated, "Order created successfully", h.toOrderResponse(order))
+	response.Success(c, http.StatusCreated, "Order created successfully", h.toOrderResponse(order), nil)
 }
 
 // GetOrder godoc
@@ -96,7 +96,7 @@ func (h *OrderHandler) GetOrder(c *gin.Context) {
 		return
 	}
 
-	response.Success(c, http.StatusOK, "Order retrieved successfully", h.toOrderResponse(order))
+	response.Success(c, http.StatusOK, "Order retrieved successfully", h.toOrderResponse(order), nil)
 }
 
 // ListUserOrders godoc
@@ -132,7 +132,7 @@ func (h *OrderHandler) ListUserOrders(c *gin.Context) {
 		Page:  page,
 		Limit: limit,
 		Data:  h.toOrdersResponse(orders),
-	})
+	}, nil)
 }
 
 // ListAllOrders godoc
@@ -164,7 +164,7 @@ func (h *OrderHandler) ListAllOrders(c *gin.Context) {
 		Page:  page,
 		Limit: limit,
 		Data:  h.toOrdersResponse(orders),
-	})
+	}, nil)
 }
 
 // CancelOrder godoc
@@ -207,7 +207,7 @@ func (h *OrderHandler) CancelOrder(c *gin.Context) {
 		return
 	}
 
-	response.Success(c, http.StatusOK, "Order cancelled successfully", nil)
+	response.Success(c, http.StatusOK, "Order cancelled successfully", nil, nil)
 }
 
 // UpdateOrderStatus godoc
@@ -246,7 +246,7 @@ func (h *OrderHandler) UpdateOrderStatus(c *gin.Context) {
 		return
 	}
 
-	response.Success(c, http.StatusOK, "Order status updated successfully", nil)
+	response.Success(c, http.StatusOK, "Order status updated successfully", nil, nil)
 }
 
 func (h *OrderHandler) toOrderResponse(o *domain.Order) *dto.OrderResponse {

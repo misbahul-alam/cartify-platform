@@ -41,16 +41,14 @@ func (h *CategoryHandler) GetAll(c *gin.Context) {
 		response.NotFound(c, "Category Not Found")
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{
-		"data":    categories,
-		"success": true,
-		"meta": gin.H{
-			"page":  page,
-			"limit": limit,
-			"total": total,
-		},
+
+	response.Success(c, http.StatusOK, "Categories retrieved successfully", categories, &response.Pagination{
+		Total: int(total),
+		Page:  page,
+		Limit: limit,
 	})
 }
+
 // GetById godoc
 // @Summary      Get category by ID
 // @Description  Get details of a single category by its UUID
@@ -74,11 +72,9 @@ func (h *CategoryHandler) GetById(c *gin.Context) {
 		response.NotFound(c, "Category Not Found")
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{
-		"data":    category,
-		"success": true,
-	})
+	response.Success(c, http.StatusOK, "Category retrieved successfully", category, nil)
 }
+
 // GetBySlug godoc
 // @Summary      Get category by Slug
 // @Description  Get details of a single category by its URL slug
@@ -96,10 +92,7 @@ func (h *CategoryHandler) GetBySlug(c *gin.Context) {
 		response.NotFound(c, "Category Not Found")
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{
-		"data":    category,
-		"success": true,
-	})
+	response.Success(c, http.StatusOK, "Category retrieved successfully", category, nil)
 }
 
 // Create godoc
@@ -123,18 +116,13 @@ func (h *CategoryHandler) Create(c *gin.Context) {
 
 	err := h.service.Create(req.Name, req.Slug, req.Description, req.ParentID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"success": false,
-			"message": err.Error(),
-		})
+		response.InternalServerError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{
-		"success": true,
-		"message": "Category Created",
-	})
+	response.Success(c, http.StatusCreated, "Category Created", nil, nil)
 }
+
 // Update godoc
 // @Summary      Update category
 // @Description  Update category details by its UUID (Admin only)
@@ -172,11 +160,9 @@ func (h *CategoryHandler) Update(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"success": true,
-		"message": "Category Updated",
-	})
+	response.Success(c, http.StatusOK, "Category Updated", nil, nil)
 }
+
 // Delete godoc
 // @Summary      Delete category
 // @Description  Delete a category by its UUID (Admin only)
@@ -200,8 +186,5 @@ func (h *CategoryHandler) Delete(c *gin.Context) {
 		response.NotFound(c, "Category Not Found")
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{
-		"success": true,
-		"message": "Category Deleted",
-	})
+	response.Success(c, http.StatusOK, "Category Deleted", nil, nil)
 }
