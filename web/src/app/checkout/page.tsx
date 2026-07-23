@@ -1,5 +1,4 @@
-"use client";
-import { CheckoutContainer } from "@/features/checkout";
+import { CheckoutContainer } from "@/components/checkout";
 
 export default function CheckoutPage() {
   return <CheckoutContainer />;

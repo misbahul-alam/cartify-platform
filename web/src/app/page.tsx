@@ -15,9 +15,8 @@ import {
   Truck,
 } from "lucide-react";
 import type { Product } from "@/types";
-import useProductsStore from "@/features/products/store";
-import { ProductCard } from "@/features/products/components/ProductCard";
-import { CategorySlider } from "@/features/products/components/CategorySlider";
+import useProductsStore from "@/store/useProductsStore";
+import { CategorySlider, ProductCard } from "@/components/products";
 
 const benefits = [
   { icon: Truck, title: "Free shipping", description: "On orders over $100" },

@@ -1,6 +1,4 @@
-"use client";
-
-import { OrderHistory } from "@/features/orders";
+import { OrderHistory } from "@/components/orders";
 
 export default function OrdersPage() {
   return <OrderHistory />;

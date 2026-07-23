@@ -8,7 +8,7 @@ import (
 )
 
 func CORSMiddleware() gin.HandlerFunc {
-	config := cors.Config{
+	return cors.New(cors.Config{
 		AllowOriginFunc: func(origin string) bool {
 			return true
 		},
@@ -31,6 +31,9 @@ func CORSMiddleware() gin.HandlerFunc {
 			"Authorization",
 			"X-Requested-With",
 			"X-CSRF-Token",
+			"X-Access-Token",
+			"X-Refresh-Token",
+			"Access-Control-Allow-Origin",
 		},
 
 		ExposeHeaders: []string{
@@ -39,9 +42,6 @@ func CORSMiddleware() gin.HandlerFunc {
 		},
 
 		AllowCredentials: true,
-
-		MaxAge: 12 * time.Hour,
-	}
-
-	return cors.New(config)
+		MaxAge:           12 * time.Hour,
+	})
 }

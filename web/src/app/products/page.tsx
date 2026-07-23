@@ -1,8 +1,8 @@
 "use client";
 
 import { Suspense } from "react";
-import { Breadcrumb, SkeletonBlock, SkeletonCard } from "@/shared/ui";
-import { ProductCatalog } from "@/features/products";
+import { Breadcrumb, SkeletonBlock, SkeletonCard } from "@/components/ui";
+import { ProductCatalog } from "@/components/products";
 
 export default function ProductsPage() {
   return (

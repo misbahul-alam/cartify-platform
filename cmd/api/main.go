@@ -22,9 +22,9 @@ import (
 	paymentHttp "github.com/misbahul-alam/cartify-platform/internal/payment/transport/http"
 	productModel "github.com/misbahul-alam/cartify-platform/internal/product/model"
 	productHttp "github.com/misbahul-alam/cartify-platform/internal/product/transport/http"
+	"github.com/misbahul-alam/cartify-platform/internal/shared/middleware"
 	userModel "github.com/misbahul-alam/cartify-platform/internal/user/model"
 	userHttp "github.com/misbahul-alam/cartify-platform/internal/user/transport/http"
-	"github.com/misbahul-alam/cartify-platform/internal/shared/middleware"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
@@ -69,7 +69,7 @@ func main() {
 	}
 
 	r := gin.New()
-	r.Use(gin.Logger(), gin.Recovery(), middleware.CORSMiddleware())
+	r.Use(middleware.CORSMiddleware(), gin.Logger(), gin.Recovery())
 
 	r.OPTIONS("/*any", func(c *gin.Context) {})
 

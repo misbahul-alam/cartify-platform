@@ -1,7 +1,5 @@
-"use client";
-
-import React, { use } from "react";
-import { ProductDetail } from "../../../features/products/components/ProductDetail";
+import { ProductDetail } from "@/components/products";
+import { use } from "react";
 
 export default function ProductDetailPage({
   params,

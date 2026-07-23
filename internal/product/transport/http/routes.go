@@ -28,10 +28,9 @@ func Routes(r *gin.RouterGroup, db *gorm.DB, config *config.Config) {
 
 	categoryRoute := r.Group("/categories")
 	{
-		categoryRoute.GET("/", categoryHandler.GetAll)
+		categoryRoute.GET("", categoryHandler.GetAll)
 		categoryRoute.GET("/:id", categoryHandler.GetById)
 		categoryRoute.GET("/slug/:slug", categoryHandler.GetBySlug)
-		categoryRoute.POST("", middleware.AuthMiddleware(config), middleware.RoleMiddleware("admin"), categoryHandler.Create)
 		categoryRoute.POST("/", middleware.AuthMiddleware(config), middleware.RoleMiddleware("admin"), categoryHandler.Create)
 		categoryRoute.PUT("/:id", middleware.AuthMiddleware(config), middleware.RoleMiddleware("admin"), categoryHandler.Update)
 		categoryRoute.DELETE("/:id", middleware.AuthMiddleware(config), middleware.RoleMiddleware("admin"), categoryHandler.Delete)
@@ -39,10 +38,10 @@ func Routes(r *gin.RouterGroup, db *gorm.DB, config *config.Config) {
 
 	productRoute := r.Group("/products")
 	{
-		productRoute.GET("/", productHandler.GetAll)
+		productRoute.GET("", productHandler.GetAll)
 		productRoute.GET("/:id", productHandler.GetById)
 		productRoute.GET("/slug/:slug", productHandler.GetBySlug)
-		productRoute.POST("/", middleware.AuthMiddleware(config), middleware.RoleMiddleware("admin"), productHandler.Create)
+		productRoute.POST("", middleware.AuthMiddleware(config), middleware.RoleMiddleware("admin"), productHandler.Create)
 		productRoute.PUT("/:id", middleware.AuthMiddleware(config), middleware.RoleMiddleware("admin"), productHandler.Update)
 		productRoute.DELETE("/:id", middleware.AuthMiddleware(config), middleware.RoleMiddleware("admin"), productHandler.Delete)
 

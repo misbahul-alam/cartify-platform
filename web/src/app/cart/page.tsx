@@ -1,7 +1,4 @@
-"use client";
-
-import { CartContainer } from "@/features/cart";
-import React from "react";
+import { CartContainer } from "@/components/cart";
 
 export default function CartPage() {
   return <CartContainer />;
