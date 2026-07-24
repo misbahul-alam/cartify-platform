@@ -1,0 +1,11 @@
+.git
+.idea
+.vscode
+web
+web/.next
+web/node_modules
+tmp
+coverage.*
+*.test
+*.out
+.env

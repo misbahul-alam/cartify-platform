@@ -3,6 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      target: prod
     container_name: cartify_api
     ports:
       - "8080:8080"
@@ -16,6 +17,27 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - cartify_network
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+      target: prod
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:8080/api/v1
+    container_name: cartify_web
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./web/.env
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8080/api/v1
+    depends_on:
+      app:
+        condition: service_started
     restart: unless-stopped
     networks:
       - cartify_network
