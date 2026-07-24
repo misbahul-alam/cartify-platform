@@ -13,6 +13,7 @@ type Category struct {
 	Slug        string        `gorm:"size:35;uniqueIndex;not null" json:"slug"`
 	Description string        `gorm:"type:text" json:"description"`
 	ParentID    *uuid.UUID    `gorm:"type:uuid" json:"parent_id,omitempty"`
+	ImageUrl    string        `gorm:"type:text" json:"image_url"`
 	Status      domain.Status `gorm:"type:varchar(20);default:'public';not null" json:"status"`
 	CreatedAt   time.Time     `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt   time.Time     `gorm:"autoUpdateTime" json:"updated_at"`
@@ -29,6 +30,7 @@ func CategoryFromDomain(c *domain.Category) *Category {
 		Slug:        c.Slug,
 		Description: c.Description,
 		ParentID:    c.ParentID,
+		ImageUrl:    c.ImageUrl,
 		Status:      c.Status,
 		CreatedAt:   c.CreatedAt,
 		UpdatedAt:   c.UpdatedAt,
@@ -42,6 +44,7 @@ func (c *Category) CategoryToDomain() *domain.Category {
 		Slug:        c.Slug,
 		Description: c.Description,
 		ParentID:    c.ParentID,
+		ImageUrl:    c.ImageUrl,
 		Status:      c.Status,
 		CreatedAt:   c.CreatedAt,
 		UpdatedAt:   c.UpdatedAt,

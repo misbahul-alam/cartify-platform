@@ -6,6 +6,7 @@ type CreateCategoryRequest struct {
 	Name        string     `json:"name" binding:"required,min=3,max=35"`
 	Slug        string     `json:"slug" binding:"required,min=3,max=35"`
 	Description string     `json:"description" binding:"required,min=3,max=100"`
+	ImageUrl    string     `json:"image_url" binding:"omitempty,url"`
 	ParentID    *uuid.UUID `json:"parent_id"`
 }
 
@@ -13,6 +14,7 @@ type CategoryUpdateRequest struct {
 	Name        string     `json:"name" binding:"required,min=3,max=35"`
 	Slug        string     `json:"slug" binding:"required,min=3,max=35"`
 	Description string     `json:"description" binding:"required,min=3,max=100"`
+	ImageUrl    string     `json:"image_url" binding:"omitempty,url"`
 	ParentID    *uuid.UUID `json:"parent_id"`
 	Status      string     `json:"status" binding:"omitempty,oneof=public private"`
 }

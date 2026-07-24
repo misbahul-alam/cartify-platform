@@ -114,7 +114,7 @@ func (h *CategoryHandler) Create(c *gin.Context) {
 		return
 	}
 
-	err := h.service.Create(req.Name, req.Slug, req.Description, req.ParentID)
+	err := h.service.Create(req.Name, req.Slug, req.Description, req.ImageUrl, req.ParentID)
 	if err != nil {
 		response.InternalServerError(c, err.Error())
 		return
@@ -154,7 +154,7 @@ func (h *CategoryHandler) Update(c *gin.Context) {
 		status = domain.Public
 	}
 
-	err = h.service.Update(id, req.Name, req.Slug, req.Description, status, req.ParentID)
+	err = h.service.Update(id, req.Name, req.Slug, req.Description, req.ImageUrl, status, req.ParentID)
 	if err != nil {
 		response.NotFound(c, err.Error())
 		return

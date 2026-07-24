@@ -5,12 +5,13 @@ import (
 	"github.com/misbahul-alam/cartify-platform/internal/product/domain"
 	"github.com/misbahul-alam/cartify-platform/internal/product/repository"
 )
+
 type CategoryService interface {
 	GetAll(page, limit int) ([]*domain.Category, int64, error)
 	GetByID(id uuid.UUID) (*domain.Category, error)
 	GetBySlug(slug string) (*domain.Category, error)
-	Create(name, slug, description string, parentID *uuid.UUID) error
-	Update(id uuid.UUID, name, slug, description string, status domain.Status, parentID *uuid.UUID) error
+	Create(name, slug, description, imageURL string, parentID *uuid.UUID) error
+	Update(id uuid.UUID, name, slug, description, imageURL string, status domain.Status, parentID *uuid.UUID) error
 	Delete(id uuid.UUID) error
 }
 
@@ -35,8 +36,8 @@ func (s *categoryService) GetBySlug(slug string) (*domain.Category, error) {
 	return s.repo.GetBySlug(slug)
 }
 
-func (s *categoryService) Create(name, slug, description string, parentID *uuid.UUID) error {
-	category, err := domain.NewCategory(name, slug, description, parentID)
+func (s *categoryService) Create(name, slug, description, imageURL string, parentID *uuid.UUID) error {
+	category, err := domain.NewCategory(name, slug, description, parentID, imageURL)
 	if err != nil {
 		return err
 	}
@@ -44,13 +45,13 @@ func (s *categoryService) Create(name, slug, description string, parentID *uuid.
 	return s.repo.Create(category)
 }
 
-func (s *categoryService) Update(id uuid.UUID, name, slug, description string, status domain.Status, parentID *uuid.UUID) error {
+func (s *categoryService) Update(id uuid.UUID, name, slug, description, imageURL string, status domain.Status, parentID *uuid.UUID) error {
 	category, err := s.repo.GetByID(id)
 	if err != nil {
 		return err
 	}
 
-	err = category.Update(name, slug, description, status, parentID)
+	err = category.Update(name, slug, description, status, parentID, imageURL)
 	if err != nil {
 		return err
 	}

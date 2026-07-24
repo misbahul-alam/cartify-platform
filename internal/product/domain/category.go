@@ -21,12 +21,13 @@ type Category struct {
 	Slug        string     `json:"slug"`
 	Description string     `json:"description"`
 	ParentID    *uuid.UUID `json:"parent_id,omitempty"`
+	ImageUrl    string     `json:"image_url"`
 	Status      Status     `json:"status"`
 	CreatedAt   time.Time  `json:"created_at"`
 	UpdatedAt   time.Time  `json:"updated_at"`
 }
 
-func NewCategory(name, slug, description string, parentID *uuid.UUID) (*Category, error) {
+func NewCategory(name, slug, description string, parentID *uuid.UUID, imageURL string) (*Category, error) {
 	if name == "" {
 		return nil, errors.New("category name is required")
 	}
@@ -41,13 +42,14 @@ func NewCategory(name, slug, description string, parentID *uuid.UUID) (*Category
 		Slug:        slug,
 		Description: description,
 		ParentID:    parentID,
+		ImageUrl:    imageURL,
 		Status:      Public,
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
 	}, nil
 }
 
-func (c *Category) Update(name, slug, description string, status Status, parentID *uuid.UUID) error {
+func (c *Category) Update(name, slug, description string, status Status, parentID *uuid.UUID, imageURL string) error {
 	if name == "" {
 		return errors.New("category name is required")
 	}
@@ -56,6 +58,7 @@ func (c *Category) Update(name, slug, description string, status Status, parentI
 	c.Description = description
 	c.Status = status
 	c.ParentID = parentID
+	c.ImageUrl = imageURL
 	c.UpdatedAt = time.Now()
 	return nil
 }

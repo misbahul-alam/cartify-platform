@@ -124,6 +124,7 @@ func main() {
 		Name:        "Electronics",
 		Slug:        "electronics",
 		Description: "Gadgets, devices, and computing accessories",
+		ImageUrl:    "https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&q=80&w=800",
 		Status:      productDomain.Public,
 	}
 	catClothing := productModel.Category{
@@ -131,6 +132,7 @@ func main() {
 		Name:        "Clothing",
 		Slug:        "clothing",
 		Description: "Trendy apparel for men, women, and children",
+		ImageUrl:    "https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&q=80&w=800",
 		Status:      productDomain.Public,
 	}
 	catBooks := productModel.Category{
@@ -138,6 +140,7 @@ func main() {
 		Name:        "Books",
 		Slug:        "books",
 		Description: "Fiction, non-fiction, academic, and development books",
+		ImageUrl:    "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&q=80&w=800",
 		Status:      productDomain.Public,
 	}
 	catHomeKitchen := productModel.Category{
@@ -145,6 +148,7 @@ func main() {
 		Name:        "Home & Kitchen",
 		Slug:        "home-kitchen",
 		Description: "Furniture, smart home appliances, and kitchenware",
+		ImageUrl:    "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&q=80&w=800",
 		Status:      productDomain.Public,
 	}
 	catSportsOutdoors := productModel.Category{
@@ -152,6 +156,7 @@ func main() {
 		Name:        "Sports & Outdoors",
 		Slug:        "sports-outdoors",
 		Description: "Sporting goods, training gear, and camping equipment",
+		ImageUrl:    "https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&q=80&w=800",
 		Status:      productDomain.Public,
 	}
 
@@ -356,6 +361,74 @@ func main() {
 			},
 			Images: []string{
 				"https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&q=80&w=600",
+			},
+		},
+		{
+			Product: productModel.Product{
+				ID:          uuid.New(),
+				SKU:         "ELEC-MAGMOUSE",
+				Name:        "Wireless Ergonomic Mouse",
+				Slug:        "wireless-ergonomic-mouse",
+				Description: "A quiet, rechargeable mouse with ergonomic contours and adjustable DPI for long work sessions.",
+				Price:       49.99,
+				CategoryID:  uuidPtr(catElectronics.ID),
+				IsStock:     true,
+				IsFeatured:  false,
+				Status:      productModel.ProductActive,
+			},
+			Images: []string{
+				"https://images.unsplash.com/photo-1605773527852-c546a8584ea3?auto=format&fit=crop&q=80&w=600",
+			},
+		},
+		{
+			Product: productModel.Product{
+				ID:          uuid.New(),
+				SKU:         "ELEC-SMARTWATCH",
+				Name:        "Fitness Smartwatch",
+				Slug:        "fitness-smartwatch",
+				Description: "Track workouts, sleep, and notifications with a bright AMOLED display and multi-day battery life.",
+				Price:       229.99,
+				CategoryID:  uuidPtr(catElectronics.ID),
+				IsStock:     true,
+				IsFeatured:  true,
+				Status:      productModel.ProductActive,
+			},
+			Images: []string{
+				"https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=600",
+			},
+		},
+		{
+			Product: productModel.Product{
+				ID:          uuid.New(),
+				SKU:         "BOOK-ATOMICHABITS",
+				Name:        "Atomic Habits",
+				Slug:        "atomic-habits",
+				Description: "A practical guide to building better habits, one small change at a time.",
+				Price:       29.99,
+				CategoryID:  uuidPtr(catBooks.ID),
+				IsStock:     true,
+				IsFeatured:  false,
+				Status:      productModel.ProductActive,
+			},
+			Images: []string{
+				"https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=600",
+			},
+		},
+		{
+			Product: productModel.Product{
+				ID:          uuid.New(),
+				SKU:         "HOME-COFFEEMAKER",
+				Name:        "Smart Coffee Maker",
+				Slug:        "smart-coffee-maker",
+				Description: "Programmable coffee maker with app control, insulated carafe, and brew-strength settings.",
+				Price:       159.99,
+				CategoryID:  uuidPtr(catHomeKitchen.ID),
+				IsStock:     true,
+				IsFeatured:  false,
+				Status:      productModel.ProductActive,
+			},
+			Images: []string{
+				"https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&q=80&w=600",
 			},
 		},
 	}
