@@ -4,6 +4,7 @@ export interface Category {
   slug: string;
   description: string;
   parent_id?: string;
+  image_url?: string;
   status: "public" | "private";
 }
 

@@ -14,8 +14,9 @@ import {
   Star,
   Truck,
 } from "lucide-react";
-import type { Product } from "@/types";
+import type { Category, Product } from "@/types";
 import useProductsStore from "@/store/useProductsStore";
+import { useCategoriesStore } from "@/store/useCategoriesStore";
 import { CategorySlider, ProductCard } from "@/components/products";
 
 const benefits = [
@@ -39,25 +40,32 @@ const benefits = [
 
 export default function HomePage() {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+  const [exploreCategories, setExploreCategories] = useState<Category[]>([]);
   const { loading, fetchProducts } = useProductsStore();
+  const { fetchCategories } = useCategoriesStore();
 
   useEffect(() => {
     async function loadHomeData() {
-      await fetchProducts(1, 20);
+      await Promise.all([fetchProducts(1, 20), fetchCategories()]);
       const products = useProductsStore.getState().products || [];
       const featured = products
         .filter((product) => product.is_featured)
         .slice(0, 4);
       setFeaturedProducts(featured.length ? featured : products.slice(0, 4));
+
+      const categories = (useCategoriesStore.getState().categories || [])
+        .filter((category) => category.status === "public")
+        .slice(0, 3);
+      setExploreCategories(categories);
     }
     loadHomeData();
-  }, [fetchProducts]);
+  }, [fetchCategories, fetchProducts]);
 
   return (
     <div className="w-full overflow-hidden bg-zinc-50 dark:bg-zinc-950">
       <section className="relative isolate overflow-hidden border-b border-zinc-200/70 bg-white dark:border-zinc-800 dark:bg-zinc-950">
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_10%_10%,rgba(99,102,241,.17),transparent_34%),radial-gradient(circle_at_88%_18%,rgba(168,85,247,.15),transparent_28%)]" />
-        <div className="absolute inset-x-0 bottom-0 -z-10 h-40 bg-gradient-to-t from-zinc-50 dark:from-zinc-950" />
+        <div className="absolute inset-x-0 bottom-0 -z-10 h-40 bg-linear-to-t from-zinc-50 dark:from-zinc-950" />
         <div className="mx-auto grid max-w-7xl gap-12 px-4 pb-16 pt-14 sm:px-6 sm:pb-24 sm:pt-20 lg:grid-cols-[1fr_.95fr] lg:items-center lg:gap-18 lg:px-8 lg:py-24">
           <div className="relative z-10 max-w-2xl">
             <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-white/80 px-3 py-1.5 text-xs font-bold text-indigo-700 shadow-sm backdrop-blur dark:border-indigo-900/60 dark:bg-indigo-950/50 dark:text-indigo-300">
@@ -116,14 +124,14 @@ export default function HomePage() {
           <div className="relative mx-auto w-full max-w-xl lg:max-w-none">
             <div className="absolute -inset-8 -z-10 rounded-[3rem] bg-indigo-400/20 blur-3xl" />
             <div className="grid grid-cols-[.76fr_1fr] gap-3 sm:gap-5">
-              <div className="relative mt-12 overflow-hidden rounded-[2rem] border-4 border-white bg-zinc-100 shadow-xl shadow-zinc-900/15 dark:border-zinc-900 dark:bg-zinc-900">
+              <div className="relative mt-12 overflow-hidden rounded-4xl border-4 border-white bg-zinc-100 shadow-xl shadow-zinc-900/15 dark:border-zinc-900 dark:bg-zinc-900">
                 <img
                   src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=700&q=85"
                   alt="A modern watch from the Cartify collection"
                   className="aspect-[.72] h-full w-full object-cover"
                 />
               </div>
-              <div className="relative overflow-hidden rounded-[2rem] border-4 border-white bg-zinc-100 shadow-2xl shadow-zinc-900/20 dark:border-zinc-900 dark:bg-zinc-900">
+              <div className="relative overflow-hidden rounded-4xl border-4 border-white bg-zinc-100 shadow-2xl shadow-zinc-900/20 dark:border-zinc-900 dark:bg-zinc-900">
                 <img
                   src="https://images.unsplash.com/photo-1491933382434-500287f9b54b?auto=format&fit=crop&w=900&q=85"
                   alt="Fresh products arranged on a table"
@@ -315,80 +323,52 @@ export default function HomePage() {
               href="/products"
               className="hidden items-center gap-1 text-sm font-bold text-indigo-600 hover:text-indigo-500 sm:inline-flex"
             >
-              Browse all <ArrowRight className="h-4 w-4" />
+              Explore more <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
-          <div className="grid gap-4 md:grid-cols-3">
-            <Link
-              href="/products?category=electronics"
-              className="group relative min-h-56 overflow-hidden rounded-2xl bg-zinc-900 p-6"
-            >
-              <img
-                src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=900&q=80"
-                alt="Electronics collection"
-                className="absolute inset-0 h-full w-full object-cover opacity-60 transition duration-500 group-hover:scale-105 group-hover:opacity-75"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/90 via-zinc-950/10" />
-              <div className="relative flex h-full flex-col justify-end">
-                <p className="text-xs font-bold uppercase tracking-widest text-indigo-200">
-                  Built for now
-                </p>
-                <h3 className="mt-2 text-2xl font-extrabold text-white">
-                  Electronics
-                </h3>
-                <span className="mt-3 inline-flex items-center gap-1 text-sm font-bold text-white">
-                  Shop category{" "}
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </span>
-              </div>
-            </Link>
-            <Link
-              href="/products?category=clothing"
-              className="group relative min-h-56 overflow-hidden rounded-2xl bg-zinc-900 p-6"
-            >
-              <img
-                src="https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&w=900&q=80"
-                alt="Clothing collection"
-                className="absolute inset-0 h-full w-full object-cover opacity-60 transition duration-500 group-hover:scale-105 group-hover:opacity-75"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/90 via-zinc-950/10" />
-              <div className="relative flex h-full flex-col justify-end">
-                <p className="text-xs font-bold uppercase tracking-widest text-indigo-200">
-                  Wear your way
-                </p>
-                <h3 className="mt-2 text-2xl font-extrabold text-white">
-                  Clothing
-                </h3>
-                <span className="mt-3 inline-flex items-center gap-1 text-sm font-bold text-white">
-                  Shop category{" "}
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </span>
-              </div>
-            </Link>
-            <Link
-              href="/products?category=books"
-              className="group relative min-h-56 overflow-hidden rounded-2xl bg-zinc-900 p-6"
-            >
-              <img
-                src="https://images.unsplash.com/photo-1495446815901-a7297e633e8d?auto=format&fit=crop&w=900&q=80"
-                alt="Books collection"
-                className="absolute inset-0 h-full w-full object-cover opacity-60 transition duration-500 group-hover:scale-105 group-hover:opacity-75"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/90 via-zinc-950/10" />
-              <div className="relative flex h-full flex-col justify-end">
-                <p className="text-xs font-bold uppercase tracking-widest text-indigo-200">
-                  A good read awaits
-                </p>
-                <h3 className="mt-2 text-2xl font-extrabold text-white">
-                  Books
-                </h3>
-                <span className="mt-3 inline-flex items-center gap-1 text-sm font-bold text-white">
-                  Shop category{" "}
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </span>
-              </div>
-            </Link>
-          </div>
+          {exploreCategories.length ? (
+            <div className="grid gap-4 md:grid-cols-3">
+              {exploreCategories.map((category) => (
+                <Link
+                  key={category.id}
+                  href={`/products?category=${category.slug}`}
+                  className="group relative min-h-56 overflow-hidden rounded-2xl bg-zinc-900 p-6"
+                >
+                  {category.image_url ? (
+                    <img
+                      src={category.image_url}
+                      alt={`${category.name} collection`}
+                      className="absolute inset-0 h-full w-full object-cover opacity-60 transition duration-500 group-hover:scale-105 group-hover:opacity-75"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 bg-linear-to-br from-indigo-600 via-violet-600 to-zinc-900" />
+                  )}
+                  <div className="absolute inset-0 bg-linear-to-t from-zinc-950/90 via-zinc-950/10" />
+                  <div className="relative flex h-full flex-col justify-end">
+                    <p className="text-xs font-bold uppercase tracking-widest text-indigo-200">
+                      {category.description?.trim() || "Fresh picks"}
+                    </p>
+                    <h3 className="mt-2 text-2xl font-extrabold text-white">
+                      {category.name}
+                    </h3>
+                    <span className="mt-3 inline-flex items-center gap-1 text-sm font-bold text-white">
+                      Shop category{" "}
+                      <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="grid gap-4 md:grid-cols-3">
+              {Array.from({ length: 3 }).map((_, index) => (
+                <div
+                  key={index}
+                  className="min-h-56 animate-pulse rounded-2xl bg-zinc-200 dark:bg-zinc-800"
+                />
+              ))}
+            </div>
+          )}
         </div>
       </section>
       <section className="mx-auto w-full max-w-7xl px-4 py-20 sm:px-6 lg:px-8">

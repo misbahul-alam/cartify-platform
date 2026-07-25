@@ -227,7 +227,7 @@ export const CartContainer: React.FC = () => {
               ) : (
                 <div className="space-y-3">
                   <Link
-                    href="/login?redirect=/checkout"
+                    href="/signin?redirect=/checkout"
                     className="flex w-full h-12 items-center justify-center gap-2 rounded-xl bg-indigo-600 text-white font-semibold shadow transition-premium hover:bg-indigo-500 cursor-pointer"
                   >
                     Login to Checkout

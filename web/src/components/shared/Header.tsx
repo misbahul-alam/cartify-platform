@@ -15,13 +15,23 @@ import {
 } from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useCategoriesStore } from "@/store/useCategoriesStore";
 
 export const Header: React.FC = () => {
-  const user = useAuthStore((state) => state.user);
-  const logout = useAuthStore((state) => state.logout);
-  const totalItems = useCartStore((state) => state.totalItems);
+  const { user } = useAuthStore();
+  const { logout } = useAuthStore();
+  const { totalItems } = useCartStore();
+  const { categories } = useCategoriesStore();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const menuItems: { title: string; href: string }[] = [
+    { title: "All Products", href: "/products" },
+    ...categories.map((category) => ({
+      title: category.name,
+      href: `/products?category=${category.slug}`,
+    })),
+  ];
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-zinc-200/80 bg-white/80 backdrop-blur-md dark:border-zinc-800/80 dark:bg-zinc-950/80">
@@ -35,30 +45,15 @@ export const Header: React.FC = () => {
             <span>Cartify</span>
           </Link>
           <nav className="hidden md:flex items-center gap-6">
-            <Link
-              href="/products"
-              className="text-sm font-medium text-zinc-700 hover:text-indigo-600 dark:text-zinc-300 dark:hover:text-indigo-400 transition-colors"
-            >
-              All Products
-            </Link>
-            <Link
-              href="/products?category=electronics"
-              className="text-sm font-medium text-zinc-700 hover:text-indigo-600 dark:text-zinc-300 dark:hover:text-indigo-400 transition-colors"
-            >
-              Electronics
-            </Link>
-            <Link
-              href="/products?category=clothing"
-              className="text-sm font-medium text-zinc-700 hover:text-indigo-600 dark:text-zinc-300 dark:hover:text-indigo-400 transition-colors"
-            >
-              Clothing
-            </Link>
-            <Link
-              href="/products?category=books"
-              className="text-sm font-medium text-zinc-700 hover:text-indigo-600 dark:text-zinc-300 dark:hover:text-indigo-400 transition-colors"
-            >
-              Books
-            </Link>
+            {menuItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="text-sm font-medium text-zinc-700 hover:text-indigo-600 dark:text-zinc-300 dark:hover:text-indigo-400 transition-colors"
+              >
+                {item.title}
+              </Link>
+            ))}
           </nav>
         </div>
 
@@ -82,11 +77,11 @@ export const Header: React.FC = () => {
                 className="flex items-center gap-2 p-2 rounded-full border border-zinc-200 hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-900 transition-all cursor-pointer"
               >
                 <div className="flex h-6 w-6 items-center justify-center rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300 text-xs font-bold uppercase">
-                  {user.first_name?.[0] ?? "U"}
-                  {user.last_name?.[0] ?? ""}
+                  {user.data.first_name?.[0] ?? "U"}
+                  {user.data.last_name?.[0] ?? ""}
                 </div>
                 <span className="hidden sm:inline text-xs font-medium text-zinc-700 dark:text-zinc-300">
-                  {user.first_name ?? user.email}
+                  {user.data.first_name ?? user.data.email}
                 </span>
               </button>
 
@@ -94,14 +89,16 @@ export const Header: React.FC = () => {
                 <div className="absolute right-0 mt-2 w-56 origin-top-right rounded-xl border border-zinc-200 bg-white p-2 shadow-lg ring-1 ring-black/5 dark:border-zinc-800 dark:bg-zinc-950">
                   <div className="px-3 py-2 border-b border-zinc-100 dark:border-zinc-900 mb-1">
                     <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                      {user.first_name} {user.last_name}
+                      {user.data.first_name} {user.data.last_name}
                     </p>
                     <p className="text-xs text-zinc-500 truncate dark:text-zinc-400">
-                      {user.email}
+                      {user.data.email}
                     </p>
                     <span className="inline-flex mt-1 items-center gap-1 rounded bg-indigo-50 px-1.5 py-0.5 text-[10px] font-medium text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400 capitalize">
-                      {user.role === "admin" && <Shield className="h-3 w-3" />}
-                      {user.role}
+                      {user.data.role === "admin" && (
+                        <Shield className="h-3 w-3" />
+                      )}
+                      {user.data.role}
                     </span>
                   </div>
                   <Link
@@ -150,34 +147,17 @@ export const Header: React.FC = () => {
       {mobileMenuOpen && (
         <div className="border-t border-zinc-200 bg-white px-4 py-4 dark:border-zinc-800 dark:bg-zinc-950 md:hidden">
           <nav className="flex flex-col gap-4">
-            <Link
-              href="/products"
-              onClick={() => setMobileMenuOpen(false)}
-              className="text-sm font-medium text-zinc-700 hover:text-indigo-600 dark:text-zinc-300 dark:hover:text-indigo-400"
-            >
-              All Products
-            </Link>
-            <Link
-              href="/products?category=electronics"
-              onClick={() => setMobileMenuOpen(false)}
-              className="text-sm font-medium text-zinc-700 hover:text-indigo-600 dark:text-zinc-300 dark:hover:text-indigo-400"
-            >
-              Electronics
-            </Link>
-            <Link
-              href="/products?category=clothing"
-              onClick={() => setMobileMenuOpen(false)}
-              className="text-sm font-medium text-zinc-700 hover:text-indigo-600 dark:text-zinc-300 dark:hover:text-indigo-400"
-            >
-              Clothing
-            </Link>
-            <Link
-              href="/products?category=books"
-              onClick={() => setMobileMenuOpen(false)}
-              className="text-sm font-medium text-zinc-700 hover:text-indigo-600 dark:text-zinc-300 dark:hover:text-indigo-400"
-            >
-              Books
-            </Link>
+            {menuItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setMobileMenuOpen(false)}
+                className="text-sm font-medium text-zinc-700 hover:text-indigo-600 dark:text-zinc-300 dark:hover:text-indigo-400 transition-colors"
+              >
+                {item.title}
+              </Link>
+            ))}
+
             {user && (
               <>
                 <div className="border-t border-zinc-200 pt-3 dark:border-zinc-800" />

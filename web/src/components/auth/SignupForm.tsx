@@ -41,7 +41,7 @@ export function SignupForm() {
         password,
       });
       setSuccess(true);
-      setTimeout(() => router.push("/login"), 3000);
+      setTimeout(() => router.push("/signin"), 3000);
     } catch (err: any) {
       setError(err.message || "Registration failed");
     } finally {
@@ -153,7 +153,7 @@ export function SignupForm() {
             <div className="text-center text-sm text-zinc-500 dark:text-zinc-400">
               Already have an account?{" "}
               <Link
-                href="/login"
+                href="/signin"
                 className="font-semibold text-indigo-600 hover:text-indigo-500 dark:text-indigo-400"
               >
                 Log in
