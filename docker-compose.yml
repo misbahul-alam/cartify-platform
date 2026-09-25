@@ -11,7 +11,7 @@ services:
       - .env
     environment:
       - DB_URL=postgres://postgres:postgres@postgres:5432/cartify?sslmode=disable
-      - REDIS_ADDR=redis:6379
+      - REDIS_URL=redis:6379
     depends_on:
       postgres:
         condition: service_healthy
