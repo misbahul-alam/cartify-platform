@@ -16,7 +16,7 @@ const ShippingDetails: React.FC<ShippingDetailsProps> = ({
   return (
     <div className="border border-zinc-200/80 rounded-2xl bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900 shadow-xs">
       <div className="flex items-center gap-2 pb-4 mb-6 border-b border-zinc-100 dark:border-zinc-800 text-zinc-900 dark:text-zinc-50">
-        <MapPin className="h-5 w-5 text-indigo-650" />
+        <MapPin className="h-5 w-5 text-indigo-600" />
         <h2 className="text-xs font-bold uppercase tracking-wider">
           Shipping Details
         </h2>

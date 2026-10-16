@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import type { Product } from "@/types";
 import { api } from "@/lib/axios";
+import { getErrorMessage } from "@/lib/errors";
 
 type ProductsState = {
   products: Product[];
@@ -14,7 +15,7 @@ type ProductsState = {
   clear: () => void;
 };
 
-export const useProductsStore = create<ProductsState>((set, get) => ({
+export const useProductsStore = create<ProductsState>((set) => ({
   products: [],
   page: 1,
   limit: 20,
@@ -27,8 +28,8 @@ export const useProductsStore = create<ProductsState>((set, get) => ({
       if (!res.data || !res.data.success)
         throw new Error(res.data?.message || "Failed to fetch products");
       set({ products: res.data.data || [], page, limit, loading: false });
-    } catch (err: any) {
-      set({ error: err?.message ?? String(err), loading: false });
+    } catch (error: unknown) {
+      set({ error: getErrorMessage(error, "Failed to fetch products"), loading: false });
     }
   },
   async fetchProductBySlug(slug: string) {
@@ -38,8 +39,8 @@ export const useProductsStore = create<ProductsState>((set, get) => ({
       if (!res.data || !res.data.success)
         throw new Error(res.data?.message || "Failed to fetch product");
       set({ selectedProduct: res.data.data || null, loading: false });
-    } catch (err: any) {
-      set({ error: err?.message ?? String(err), loading: false });
+    } catch (error: unknown) {
+      set({ error: getErrorMessage(error, "Failed to fetch product"), loading: false });
     }
   },
   clear() {

@@ -55,7 +55,9 @@ func main() {
 	db := database.NewPostgres(cfg.DB.URL, cfg.AppEnv)
 	redisClient := cache.NewRedisCache(cfg.Redis.Addr)
 
-	db.Exec(`CREATE EXTENSION IF NOT EXISTS "pgcrypto"`)
+	if err := db.Exec(`CREATE EXTENSION IF NOT EXISTS "pgcrypto"`).Error; err != nil {
+		log.Printf("warning: failed to ensure pgcrypto extension: %v", err)
+	}
 
 	if err := db.AutoMigrate(
 		&userModel.User{},
@@ -69,7 +71,7 @@ func main() {
 	}
 
 	r := gin.New()
-	r.Use(middleware.CORSMiddleware(), gin.Logger(), gin.Recovery())
+	r.Use(middleware.CORSMiddleware(cfg), gin.Logger(), gin.Recovery())
 
 	r.OPTIONS("/*any", func(c *gin.Context) {})
 

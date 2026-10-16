@@ -27,7 +27,7 @@ func Routes(r *gin.RouterGroup, db *gorm.DB, redisClient *redis.Client, config *
 	orderServ := orderService.NewOrderService(orderRepo, cartServ)
 
 	paymentRepo := repository.NewPaymentRepo(db)
-	paymentServ := service.NewPaymentService(paymentRepo, orderServ)
+	paymentServ := service.NewPaymentService(paymentRepo, orderServ, config.Stripe.Currency)
 
 	stripeGateway := stripe.NewStripeGateway(config.Stripe.SecretKey, config.Stripe.Currency)
 	paymentServ.RegisterGateway(domain.PaymentProviderStripe, stripeGateway)

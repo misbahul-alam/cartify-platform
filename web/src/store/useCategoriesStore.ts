@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { api } from "@/lib/axios";
+import { getErrorMessage } from "@/lib/errors";
 import type { Category } from "@/types";
 
 type CategoriesState = {
@@ -21,8 +22,8 @@ export const useCategoriesStore = create<CategoriesState>((set) => ({
       if (!res.data || !res.data.success)
         throw new Error(res.data?.message || "Failed to fetch categories");
       set({ categories: res.data.data || [], loading: false });
-    } catch (err: any) {
-      set({ error: err?.message ?? String(err), loading: false });
+    } catch (error: unknown) {
+      set({ error: getErrorMessage(error, "Failed to fetch categories"), loading: false });
     }
   },
   clear() {

@@ -504,7 +504,7 @@ func main() {
 		Provider:      "stripe",
 		Amount:        order1.TotalPrice,
 		Currency:      "usd",
-		Status:        "succeeded",
+		Status:        "completed",
 		CreatedAt:     order1.CreatedAt,
 		UpdatedAt:     order1.CreatedAt,
 	}

@@ -25,6 +25,7 @@ export const ProductCatalog: React.FC = () => {
 
   useEffect(() => {
     const catParam = searchParams.get("category");
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSelectedCategory(catParam || "all");
 
     const searchParam = searchParams.get("search");

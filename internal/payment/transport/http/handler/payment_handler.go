@@ -27,7 +27,6 @@ func NewPaymentHandler(service service.PaymentService, config *config.Config) *P
 	}
 }
 
-// CreatePaymentIntent godoc
 // @Summary Create Payment Intent
 // @Description Create a payment intent for a pending order
 // @Tags Payments
@@ -72,7 +71,7 @@ func (h *PaymentHandler) CreatePaymentIntent(c *gin.Context) {
 			response.BadRequest(c, err.Error(), nil)
 			return
 		}
-		response.InternalServerError(c, err.Error())
+		response.InternalServerError(c, "internal server error")
 		return
 	}
 
@@ -82,7 +81,6 @@ func (h *PaymentHandler) CreatePaymentIntent(c *gin.Context) {
 	}, nil)
 }
 
-// StripeWebhook godoc
 // @Summary Stripe Webhook
 // @Description Handle Stripe webhook events to update payment status
 // @Tags Payments

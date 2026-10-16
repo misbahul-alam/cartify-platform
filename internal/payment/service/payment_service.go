@@ -25,14 +25,19 @@ type paymentService struct {
 	paymentRepo  repository.PaymentRepo
 	orderService orderService.OrderService
 	gateways     map[domain.PaymentProvider]domain.PaymentGateway
+	currency     string
 	mu           sync.RWMutex
 }
 
-func NewPaymentService(paymentRepo repository.PaymentRepo, orderService orderService.OrderService) PaymentService {
+func NewPaymentService(paymentRepo repository.PaymentRepo, orderService orderService.OrderService, currency string) PaymentService {
+	if currency == "" {
+		currency = "usd"
+	}
 	return &paymentService{
 		paymentRepo:  paymentRepo,
 		orderService: orderService,
 		gateways:     make(map[domain.PaymentProvider]domain.PaymentGateway),
+		currency:     currency,
 	}
 }
 
@@ -74,6 +79,7 @@ func (s *paymentService) CreatePaymentIntent(ctx context.Context, orderID uuid.U
 	input := domain.CreatePaymentIntentInput{
 		OrderID:     order.ID.String(),
 		Amount:      order.TotalPrice,
+		Currency:    s.currency,
 		Description: fmt.Sprintf("Payment for Order %s", order.ID.String()),
 	}
 	output, err := gateway.CreatePaymentIntent(ctx, input)
@@ -81,7 +87,7 @@ func (s *paymentService) CreatePaymentIntent(ctx context.Context, orderID uuid.U
 		return nil, fmt.Errorf("failed to create payment intent: %w", err)
 	}
 
-	payment, err := domain.NewPayment(order.ID, providerStr, order.TotalPrice, "usd", output.TransactionID)
+	payment, err := domain.NewPayment(order.ID, providerStr, order.TotalPrice, s.currency, output.TransactionID)
 	if err != nil {
 		return nil, err
 	}

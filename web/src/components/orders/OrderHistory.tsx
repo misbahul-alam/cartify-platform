@@ -19,6 +19,7 @@ import {
 import type { Order } from "@/types";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useOrdersStore } from "@/store/useOrdersStore";
+import { getErrorMessage } from "@/lib/errors";
 
 export const OrderHistory: React.FC = () => {
   const user = useAuthStore((state) => state.user);
@@ -42,8 +43,8 @@ export const OrderHistory: React.FC = () => {
     if (!confirm("Are you sure you want to cancel this order?")) return;
     try {
       await cancelOrder(id);
-    } catch (err: any) {
-      alert(err?.message || "Failed to cancel order");
+    } catch (error: unknown) {
+      alert(getErrorMessage(error, "Failed to cancel order"));
     }
   };
 
@@ -205,7 +206,7 @@ export const OrderHistory: React.FC = () => {
                     Shipping Address
                   </p>
                   <p
-                    className="text-xs text-zinc-650 dark:text-zinc-350 truncate max-w-[140px]"
+                    className="text-xs text-zinc-600 dark:text-zinc-400 truncate max-w-[140px]"
                     title={order.shipping_address}
                   >
                     {order.shipping_address}
@@ -220,7 +221,7 @@ export const OrderHistory: React.FC = () => {
                   order.status.toLowerCase() === "processing") && (
                   <button
                     onClick={() => handleCancelOrder(order.id)}
-                    className="text-xs font-semibold text-red-655 hover:text-red-500 transition-colors cursor-pointer"
+                    className="text-xs font-semibold text-red-600 hover:text-red-500 transition-colors cursor-pointer"
                   >
                     Cancel Order
                   </button>
@@ -229,7 +230,7 @@ export const OrderHistory: React.FC = () => {
             </div>
 
             <div className="px-6 py-4 divide-y divide-zinc-100 dark:divide-zinc-800">
-              {order.items?.map((item: any) => (
+              {order.items?.map((item) => (
                 <div
                   key={item.id}
                   className="py-4 flex justify-between items-center text-sm gap-4 first:pt-2 last:pb-2"

@@ -13,12 +13,10 @@ import { Breadcrumb, Button } from "@/components/ui";
 import ShippingDetails from "./ShippingDetails";
 import SummaryDetails from "./SummaryDetails";
 import PaymentForm from "./PaymentForm";
-import { useAuthStore } from "@/store/useAuthStore";
+import { getErrorMessage } from "@/lib/errors";
 
 export const CheckoutContainer: React.FC = () => {
-  const user = useAuthStore((state) => state.user);
-  console.log("CheckoutContainer user:", user);
-  const { items, totalPrice, clearCart, loading: cartLoading } = useCartStore();
+  const { items, totalPrice, clearCart } = useCartStore();
 
   const [shippingAddress, setShippingAddress] = useState("");
 
@@ -41,10 +39,6 @@ export const CheckoutContainer: React.FC = () => {
     try {
       const createdOrder = await createOrder({
         shipping_address: shippingAddress,
-        items: items.map((item) => ({
-          product_id: item.product.id,
-          quantity: item.quantity,
-        })),
       });
 
       setSuccessOrder(createdOrder);
@@ -63,7 +57,7 @@ export const CheckoutContainer: React.FC = () => {
         if (paymentData) {
           setPaymentMsg("Payment authorized successfully via Stripe.");
         }
-      } catch (payErr: any) {
+      } catch (payErr: unknown) {
         console.warn(
           "Stripe intent failed (probably invalid secret keys):",
           payErr,
@@ -74,8 +68,8 @@ export const CheckoutContainer: React.FC = () => {
       }
 
       await clearCart();
-    } catch (err: any) {
-      setError(err.message || "Something went wrong during checkout.");
+    } catch (error: unknown) {
+      setError(getErrorMessage(error, "Something went wrong during checkout."));
     } finally {
       setLoading(false);
     }
@@ -132,7 +126,7 @@ export const CheckoutContainer: React.FC = () => {
             </Link>
             <Link
               href="/products"
-              className="text-sm text-indigo-650 hover:text-indigo-500 font-semibold cursor-pointer"
+              className="text-sm text-indigo-600 hover:text-indigo-500 font-semibold cursor-pointer"
             >
               Continue Shopping
             </Link>

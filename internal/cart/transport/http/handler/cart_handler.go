@@ -21,7 +21,6 @@ func NewCartHandler(service service.CartService) *CartHandler {
 	return &CartHandler{service: service}
 }
 
-// GetCart godoc
 // @Summary Get Current User Cart
 // @Description Retrieve all items in the currently authenticated user's cart.
 // @Tags Cart
@@ -40,14 +39,13 @@ func (h *CartHandler) GetCart(c *gin.Context) {
 
 	cart, err := h.service.GetCart(c.Request.Context(), userID)
 	if err != nil {
-		response.InternalServerError(c, err.Error())
+		response.InternalServerError(c, "internal server error")
 		return
 	}
 
 	response.Success(c, http.StatusOK, "Cart retrieved successfully", h.toCartResponse(cart), nil)
 }
 
-// AddItem godoc
 // @Summary Add Item to Cart
 // @Description Add a product to the authenticated user's cart (increments quantity if already in cart).
 // @Tags Cart
@@ -82,7 +80,6 @@ func (h *CartHandler) AddItem(c *gin.Context) {
 	response.Success(c, http.StatusOK, "Item added to cart successfully", h.toCartResponse(cart), nil)
 }
 
-// UpdateItem godoc
 // @Summary Update Cart Item Quantity
 // @Description Set the exact quantity of a product in the authenticated user's cart.
 // @Tags Cart
@@ -117,7 +114,6 @@ func (h *CartHandler) UpdateItem(c *gin.Context) {
 	response.Success(c, http.StatusOK, "Cart item updated successfully", h.toCartResponse(cart), nil)
 }
 
-// RemoveItem godoc
 // @Summary Remove Item from Cart
 // @Description Remove a product completely from the authenticated user's cart.
 // @Tags Cart
@@ -153,7 +149,6 @@ func (h *CartHandler) RemoveItem(c *gin.Context) {
 	response.Success(c, http.StatusOK, "Item removed from cart successfully", h.toCartResponse(cart), nil)
 }
 
-// ClearCart godoc
 // @Summary Clear Entire Cart
 // @Description Delete all items from the authenticated user's cart.
 // @Tags Cart
@@ -172,7 +167,7 @@ func (h *CartHandler) ClearCart(c *gin.Context) {
 
 	err = h.service.ClearCart(c.Request.Context(), userID)
 	if err != nil {
-		response.InternalServerError(c, err.Error())
+		response.InternalServerError(c, "internal server error")
 		return
 	}
 

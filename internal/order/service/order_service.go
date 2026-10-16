@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 
 	"github.com/google/uuid"
 	cartService "github.com/misbahul-alam/cartify-platform/internal/cart/service"
@@ -63,12 +64,14 @@ func (s *orderService) CreateOrder(ctx context.Context, userID uuid.UUID, shippi
 		return nil, err
 	}
 
+	order.TotalPrice += domain.ShippingCost(order.TotalPrice)
+
 	if err := s.orderRepo.Create(order); err != nil {
 		return nil, fmt.Errorf("failed to save order: %w", err)
 	}
 
 	if err := s.cartService.ClearCart(ctx, userID); err != nil {
-
+		log.Printf("warning: failed to clear cart for user %s after order %s: %v", userID, order.ID, err)
 	}
 
 	return order, nil

@@ -2,7 +2,6 @@ package handler
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -11,6 +10,7 @@ import (
 	"github.com/misbahul-alam/cartify-platform/internal/shared/utils"
 	"github.com/misbahul-alam/cartify-platform/internal/user/service"
 	"github.com/misbahul-alam/cartify-platform/internal/user/transport/http/dto"
+	"gorm.io/gorm"
 )
 
 type UserHandler struct {
@@ -21,7 +21,6 @@ func NewUserHandler(service *service.UserService) *UserHandler {
 	return &UserHandler{service: service}
 }
 
-// Me godoc
 // @Summary Get Current User Profile
 // @Description Retrieve the detailed profile information of the currently authenticated user.
 // @Tags Users
@@ -38,18 +37,19 @@ func (h *UserHandler) Me(c *gin.Context) {
 		return
 	}
 
-	fmt.Println("id:", uid)
-
 	user, err := h.service.GetUserById(uid)
 	if err != nil {
-		response.InternalServerError(c, err.Error())
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			response.NotFound(c, "user not found")
+			return
+		}
+		response.InternalServerError(c, "failed to retrieve user profile")
 		return
 	}
 
 	response.Success(c, http.StatusOK, "User profile retrieved successfully", user, nil)
 }
 
-// GetAll godoc
 // @Summary List All Users
 // @Description Retrieve a list of all registered users. This endpoint is restricted to administrators.
 // @Tags Users
@@ -63,13 +63,12 @@ func (h *UserHandler) Me(c *gin.Context) {
 func (h *UserHandler) GetAll(c *gin.Context) {
 	users, err := h.service.GetAllUsers()
 	if err != nil {
-		response.InternalServerError(c, err.Error())
+		response.InternalServerError(c, "internal server error")
 		return
 	}
 	response.Success(c, http.StatusOK, "Users retrieved successfully", users, nil)
 }
 
-// UpdateProfile godoc
 // @Summary Update Profile
 // @Description Modify the personal details (first name, last name) of the currently authenticated user.
 // @Tags Users
@@ -80,7 +79,7 @@ func (h *UserHandler) GetAll(c *gin.Context) {
 // @Success 200 {object} response.Response{data=model.User} "Successfully updated profile."
 // @Failure 400 {object} response.Response "Invalid request payload or validation error."
 // @Failure 401 {object} response.Response "Unauthorized: Missing or invalid authentication token."
-// @Router /users/profile [patch]
+// @Router /users [patch]
 func (h *UserHandler) UpdateProfile(c *gin.Context) {
 	uid, err := h.getUserID(c)
 	if err != nil {
@@ -95,14 +94,13 @@ func (h *UserHandler) UpdateProfile(c *gin.Context) {
 
 	user, err := h.service.UpdateProfile(uid, req.FirstName, req.LastName)
 	if err != nil {
-		response.InternalServerError(c, err.Error())
+		response.InternalServerError(c, "internal server error")
 		return
 	}
 
 	response.Success(c, http.StatusOK, "Profile updated successfully", user, nil)
 }
 
-// UpdatePassword godoc
 // @Summary Change Password
 // @Description Update the password for the currently authenticated user. Requires verifying the old password.
 // @Tags Users
@@ -134,7 +132,6 @@ func (h *UserHandler) UpdatePassword(c *gin.Context) {
 	response.Success(c, http.StatusOK, "Password updated successfully", nil, nil)
 }
 
-// Delete godoc
 // @Summary Delete Account
 // @Description Permanently remove the currently authenticated user's account from the system.
 // @Tags Users
@@ -152,7 +149,7 @@ func (h *UserHandler) Delete(c *gin.Context) {
 	}
 
 	if err := h.service.DeleteUser(uid); err != nil {
-		response.InternalServerError(c, err.Error())
+		response.InternalServerError(c, "internal server error")
 		return
 	}
 

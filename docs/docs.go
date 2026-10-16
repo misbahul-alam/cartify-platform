@@ -186,11 +186,6 @@ const docTemplate = `{
         },
         "/cart": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Retrieve all items in the currently authenticated user's cart.",
                 "consumes": [
                     "application/json"
@@ -233,14 +228,14 @@ const docTemplate = `{
                             "$ref": "#/definitions/response.Response"
                         }
                     }
-                }
-            },
-            "delete": {
+                },
                 "security": [
                     {
                         "BearerAuth": []
                     }
-                ],
+                ]
+            },
+            "delete": {
                 "description": "Delete all items from the authenticated user's cart.",
                 "consumes": [
                     "application/json"
@@ -271,16 +266,16 @@ const docTemplate = `{
                             "$ref": "#/definitions/response.Response"
                         }
                     }
-                }
-            }
-        },
-        "/cart/items": {
-            "put": {
+                },
                 "security": [
                     {
                         "BearerAuth": []
                     }
-                ],
+                ]
+            }
+        },
+        "/cart/items": {
+            "put": {
                 "description": "Set the exact quantity of a product in the authenticated user's cart.",
                 "consumes": [
                     "application/json"
@@ -340,14 +335,14 @@ const docTemplate = `{
                             "$ref": "#/definitions/response.Response"
                         }
                     }
-                }
-            },
-            "post": {
+                },
                 "security": [
                     {
                         "BearerAuth": []
                     }
-                ],
+                ]
+            },
+            "post": {
                 "description": "Add a product to the authenticated user's cart (increments quantity if already in cart).",
                 "consumes": [
                     "application/json"
@@ -407,16 +402,16 @@ const docTemplate = `{
                             "$ref": "#/definitions/response.Response"
                         }
                     }
-                }
-            }
-        },
-        "/cart/items/{product_id}": {
-            "delete": {
+                },
                 "security": [
                     {
                         "BearerAuth": []
                     }
-                ],
+                ]
+            }
+        },
+        "/cart/items/{product_id}": {
+            "delete": {
                 "description": "Remove a product completely from the authenticated user's cart.",
                 "consumes": [
                     "application/json"
@@ -474,7 +469,12 @@ const docTemplate = `{
                             "$ref": "#/definitions/response.Response"
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
             }
         },
         "/categories": {
@@ -520,11 +520,6 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Create a new category (Admin only)",
                 "consumes": [
                     "application/json"
@@ -566,7 +561,12 @@ const docTemplate = `{
                             "$ref": "#/definitions/response.Response"
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
             }
         },
         "/categories/slug/{slug}": {
@@ -645,11 +645,6 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Update category details by its UUID (Admin only)",
                 "consumes": [
                     "application/json"
@@ -698,14 +693,14 @@ const docTemplate = `{
                             "$ref": "#/definitions/response.Response"
                         }
                     }
-                }
-            },
-            "delete": {
+                },
                 "security": [
                     {
                         "BearerAuth": []
                     }
-                ],
+                ]
+            },
+            "delete": {
                 "description": "Delete a category by its UUID (Admin only)",
                 "consumes": [
                     "application/json"
@@ -739,16 +734,16 @@ const docTemplate = `{
                             "$ref": "#/definitions/response.Response"
                         }
                     }
-                }
-            }
-        },
-        "/orders": {
-            "get": {
+                },
                 "security": [
                     {
                         "BearerAuth": []
                     }
-                ],
+                ]
+            }
+        },
+        "/orders": {
+            "get": {
                 "description": "Retrieve a list of paginated orders for the authenticated user.",
                 "consumes": [
                     "application/json"
@@ -807,14 +802,14 @@ const docTemplate = `{
                             "$ref": "#/definitions/response.Response"
                         }
                     }
-                }
-            },
-            "post": {
+                },
                 "security": [
                     {
                         "BearerAuth": []
                     }
-                ],
+                ]
+            },
+            "post": {
                 "description": "Checkout the items in the cart and create a pending order.",
                 "consumes": [
                     "application/json"
@@ -874,16 +869,16 @@ const docTemplate = `{
                             "$ref": "#/definitions/response.Response"
                         }
                     }
-                }
-            }
-        },
-        "/orders/all": {
-            "get": {
+                },
                 "security": [
                     {
                         "BearerAuth": []
                     }
-                ],
+                ]
+            }
+        },
+        "/orders/all": {
+            "get": {
                 "description": "Retrieve a paginated list of all orders.",
                 "consumes": [
                     "application/json"
@@ -948,16 +943,16 @@ const docTemplate = `{
                             "$ref": "#/definitions/response.Response"
                         }
                     }
-                }
-            }
-        },
-        "/orders/{id}": {
-            "get": {
+                },
                 "security": [
                     {
                         "BearerAuth": []
                     }
-                ],
+                ]
+            }
+        },
+        "/orders/{id}": {
+            "get": {
                 "description": "Retrieve details of a specific order.",
                 "consumes": [
                     "application/json"
@@ -1027,16 +1022,16 @@ const docTemplate = `{
                             "$ref": "#/definitions/response.Response"
                         }
                     }
-                }
-            }
-        },
-        "/orders/{id}/cancel": {
-            "put": {
+                },
                 "security": [
                     {
                         "BearerAuth": []
                     }
-                ],
+                ]
+            }
+        },
+        "/orders/{id}/cancel": {
+            "put": {
                 "description": "Cancel a pending or processing order.",
                 "consumes": [
                     "application/json"
@@ -1094,16 +1089,16 @@ const docTemplate = `{
                             "$ref": "#/definitions/response.Response"
                         }
                     }
-                }
-            }
-        },
-        "/orders/{id}/status": {
-            "put": {
+                },
                 "security": [
                     {
                         "BearerAuth": []
                     }
-                ],
+                ]
+            }
+        },
+        "/orders/{id}/status": {
+            "put": {
                 "description": "Update the status of an order.",
                 "consumes": [
                     "application/json"
@@ -1170,16 +1165,16 @@ const docTemplate = `{
                             "$ref": "#/definitions/response.Response"
                         }
                     }
-                }
-            }
-        },
-        "/payments/intent": {
-            "post": {
+                },
                 "security": [
                     {
                         "BearerAuth": []
                     }
-                ],
+                ]
+            }
+        },
+        "/payments/intent": {
+            "post": {
                 "description": "Create a payment intent for a pending order",
                 "consumes": [
                     "application/json"
@@ -1239,7 +1234,12 @@ const docTemplate = `{
                             "$ref": "#/definitions/response.Response"
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
             }
         },
         "/payments/webhook/stripe": {
@@ -1331,11 +1331,6 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Create a new product (Admin only)",
                 "consumes": [
                     "application/json"
@@ -1377,7 +1372,12 @@ const docTemplate = `{
                             "$ref": "#/definitions/response.Response"
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
             }
         },
         "/products/slug/{slug}": {
@@ -1456,11 +1456,6 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Update product details by its UUID (Admin only)",
                 "consumes": [
                     "application/json"
@@ -1509,14 +1504,14 @@ const docTemplate = `{
                             "$ref": "#/definitions/response.Response"
                         }
                     }
-                }
-            },
-            "delete": {
+                },
                 "security": [
                     {
                         "BearerAuth": []
                     }
-                ],
+                ]
+            },
+            "delete": {
                 "description": "Delete a product by its UUID (Admin only)",
                 "consumes": [
                     "application/json"
@@ -1550,16 +1545,16 @@ const docTemplate = `{
                             "$ref": "#/definitions/response.Response"
                         }
                     }
-                }
-            }
-        },
-        "/products/{id}/images": {
-            "post": {
+                },
                 "security": [
                     {
                         "BearerAuth": []
                     }
-                ],
+                ]
+            }
+        },
+        "/products/{id}/images": {
+            "post": {
                 "description": "Upload an image file for a product (Admin only)",
                 "consumes": [
                     "multipart/form-data"
@@ -1606,16 +1601,16 @@ const docTemplate = `{
                             "$ref": "#/definitions/response.Response"
                         }
                     }
-                }
-            }
-        },
-        "/products/{id}/images/{image_id}": {
-            "delete": {
+                },
                 "security": [
                     {
                         "BearerAuth": []
                     }
-                ],
+                ]
+            }
+        },
+        "/products/{id}/images/{image_id}": {
+            "delete": {
                 "description": "Delete an image from a product by its UUID (Admin only)",
                 "consumes": [
                     "application/json"
@@ -1662,16 +1657,16 @@ const docTemplate = `{
                             "$ref": "#/definitions/response.Response"
                         }
                     }
-                }
-            }
-        },
-        "/products/{id}/images/{image_id}/primary": {
-            "patch": {
+                },
                 "security": [
                     {
                         "BearerAuth": []
                     }
-                ],
+                ]
+            }
+        },
+        "/products/{id}/images/{image_id}/primary": {
+            "patch": {
                 "description": "Set an image as the primary cover image for a product (Admin only)",
                 "consumes": [
                     "application/json"
@@ -1718,16 +1713,16 @@ const docTemplate = `{
                             "$ref": "#/definitions/response.Response"
                         }
                     }
-                }
-            }
-        },
-        "/users": {
-            "get": {
+                },
                 "security": [
                     {
                         "BearerAuth": []
                     }
-                ],
+                ]
+            }
+        },
+        "/users": {
+            "get": {
                 "description": "Retrieve a list of all registered users. This endpoint is restricted to administrators.",
                 "consumes": [
                     "application/json"
@@ -1773,14 +1768,14 @@ const docTemplate = `{
                             "$ref": "#/definitions/response.Response"
                         }
                     }
-                }
-            },
-            "delete": {
+                },
                 "security": [
                     {
                         "BearerAuth": []
                     }
-                ],
+                ]
+            },
+            "delete": {
                 "description": "Permanently remove the currently authenticated user's account from the system.",
                 "consumes": [
                     "application/json"
@@ -1811,68 +1806,14 @@ const docTemplate = `{
                             "$ref": "#/definitions/response.Response"
                         }
                     }
-                }
-            }
-        },
-        "/users/me": {
-            "get": {
+                },
                 "security": [
                     {
                         "BearerAuth": []
                     }
-                ],
-                "description": "Retrieve the detailed profile information of the currently authenticated user.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Users"
-                ],
-                "summary": "Get Current User Profile",
-                "responses": {
-                    "200": {
-                        "description": "Successfully retrieved user profile.",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/model.User"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized: Missing or invalid authentication token.",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    },
-                    "404": {
-                        "description": "User not found.",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/users/profile": {
+                ]
+            },
             "patch": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Modify the personal details (first name, last name) of the currently authenticated user.",
                 "consumes": [
                     "application/json"
@@ -1926,16 +1867,68 @@ const docTemplate = `{
                             "$ref": "#/definitions/response.Response"
                         }
                     }
-                }
-            }
-        },
-        "/users/update-password": {
-            "post": {
+                },
                 "security": [
                     {
                         "BearerAuth": []
                     }
+                ]
+            }
+        },
+        "/users/me": {
+            "get": {
+                "description": "Retrieve the detailed profile information of the currently authenticated user.",
+                "consumes": [
+                    "application/json"
                 ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get Current User Profile",
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved user profile.",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.User"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized: Missing or invalid authentication token.",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found.",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/users/update-password": {
+            "post": {
                 "description": "Update the password for the currently authenticated user. Requires verifying the old password.",
                 "consumes": [
                     "application/json"
@@ -1977,7 +1970,12 @@ const docTemplate = `{
                             "$ref": "#/definitions/response.Response"
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
             }
         }
     },
@@ -2049,6 +2047,9 @@ const docTemplate = `{
                     "maxLength": 100,
                     "minLength": 3
                 },
+                "image_url": {
+                    "type": "string"
+                },
                 "name": {
                     "type": "string",
                     "maxLength": 35,
@@ -2083,6 +2084,9 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 100,
                     "minLength": 3
+                },
+                "image_url": {
+                    "type": "string"
                 },
                 "name": {
                     "type": "string",
@@ -2488,6 +2492,20 @@ const docTemplate = `{
                 }
             }
         },
+        "response.Pagination": {
+            "type": "object",
+            "properties": {
+                "limit": {
+                    "type": "integer"
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
         "response.Response": {
             "type": "object",
             "properties": {
@@ -2495,6 +2513,9 @@ const docTemplate = `{
                 "errors": {},
                 "message": {
                     "type": "string"
+                },
+                "pagination": {
+                    "$ref": "#/definitions/response.Pagination"
                 },
                 "success": {
                     "type": "boolean"

@@ -109,19 +109,16 @@ func (s *productService) DeleteImage(ctx context.Context, productID, imageID uui
 		return errors.New("image not found")
 	}
 
-	// Delete from storage
 	err = s.storage.DeleteFile(ctx, imageToDelete.PublicID)
 	if err != nil {
 		return err
 	}
 
-	// Delete from repository
 	err = s.repo.DeleteImage(imageID)
 	if err != nil {
 		return err
 	}
 
-	// If the deleted image was primary and there are other images, set the first one as primary
 	if imageToDelete.IsPrimary && len(product.Images) > 1 {
 		var newPrimary *domain.ProductImage
 		for _, img := range product.Images {
@@ -157,7 +154,6 @@ func (s *productService) SetPrimaryImage(productID, imageID uuid.UUID) error {
 		return errors.New("image not found")
 	}
 
-	// Start a transaction would be better here, but for now we'll do it sequentially
 	for _, img := range product.Images {
 		if img.IsPrimary {
 			img.IsPrimary = false

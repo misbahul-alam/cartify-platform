@@ -141,7 +141,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 <Link
                   key={category.id}
                   href={`/products?category=${category.slug}`}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-zinc-200/80 bg-white/60 px-3.5 py-1.5 font-medium text-zinc-700 backdrop-blur-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-zinc-400 hover:bg-white hover:text-zinc-950 hover:shadow-xs dark:border-zinc-800 dark:bg-zinc-900/50 dark:text-zinc-300 dark:hover:border-zinc-700 dark:hover:bg-zinc-850 dark:hover:text-white"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-zinc-200/80 bg-white/60 px-3.5 py-1.5 font-medium text-zinc-700 backdrop-blur-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-zinc-400 hover:bg-white hover:text-zinc-950 hover:shadow-xs dark:border-zinc-800 dark:bg-zinc-900/50 dark:text-zinc-300 dark:hover:border-zinc-700 dark:hover:bg-zinc-800 dark:hover:text-white"
                 >
                   <span>✦</span>
                   <span>{category.name}</span>

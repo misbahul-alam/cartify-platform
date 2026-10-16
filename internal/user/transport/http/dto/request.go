@@ -10,7 +10,7 @@ type RegisterRequest struct {
 	LastName        string `json:"last_name" binding:"required,max=30"`
 	Email           string `json:"email" binding:"required,email"`
 	Password        string `json:"password" binding:"required,min=8,max=20"`
-	ConfirmPassword string `json:"confirm_password" binding:"required"`
+	ConfirmPassword string `json:"confirm_password" binding:"required,eqfield=Password"`
 }
 
 type RefreshRequest struct {

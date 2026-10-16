@@ -1,9 +1,16 @@
 "use client";
 
 import React from "react";
+import type { Product } from "@/types";
+
+type SummaryItem = {
+  product: Product;
+  quantity: number;
+  subtotal: number;
+};
 
 type SummaryDetailsProps = {
-  items: any[];
+  items: SummaryItem[];
   totalPrice: number;
   shippingCost: number;
   finalTotal: number;
@@ -62,7 +69,7 @@ const SummaryDetails: React.FC<SummaryDetailsProps> = ({
           <span className="text-xs font-bold text-zinc-900 dark:text-zinc-50">
             Grand Total
           </span>
-          <span className="text-xl font-extrabold text-zinc-955 dark:text-zinc-50">
+          <span className="text-xl font-extrabold text-zinc-950 dark:text-zinc-50">
             ${finalTotal.toFixed(2)}
           </span>
         </div>

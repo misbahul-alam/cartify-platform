@@ -5,12 +5,27 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/misbahul-alam/cartify-platform/infra/config"
 )
 
-func CORSMiddleware() gin.HandlerFunc {
+func CORSMiddleware(cfg *config.Config) gin.HandlerFunc {
+	allowed := make(map[string]struct{}, len(cfg.CORS.AllowedOrigins))
+	allowAll := false
+	for _, origin := range cfg.CORS.AllowedOrigins {
+		if origin == "*" {
+			allowAll = true
+			break
+		}
+		allowed[origin] = struct{}{}
+	}
+
 	return cors.New(cors.Config{
 		AllowOriginFunc: func(origin string) bool {
-			return true
+			if allowAll {
+				return true
+			}
+			_, ok := allowed[origin]
+			return ok
 		},
 
 		AllowMethods: []string{

@@ -42,8 +42,8 @@ export const ProductDetail: React.FC<Props> = ({ slug }) => {
             setActiveImage(p.images[0].url);
           }
         })
-        .catch((err: any) => {
-          console.error("Failed to load product details:", err);
+        .catch((error: unknown) => {
+          console.error("Failed to load product details:", error);
         });
     }
   }, [slug]);
@@ -123,7 +123,7 @@ export const ProductDetail: React.FC<Props> = ({ slug }) => {
 
           {product.images?.length > 1 && (
             <div className="flex items-center gap-3">
-              {product.images.map((img: any) => (
+              {product.images.map((img) => (
                 <button
                   key={img.id}
                   onClick={() => setActiveImage(img.url)}
@@ -163,7 +163,7 @@ export const ProductDetail: React.FC<Props> = ({ slug }) => {
             <h1 className="text-3xl sm:text-4xl font-extrabold text-zinc-900 dark:text-zinc-50 tracking-tight mt-2 leading-[1.15]">
               {product.name}
             </h1>
-            <p className="text-sm font-mono text-zinc-400 dark:text-zinc-550 mt-2">
+            <p className="text-sm font-mono text-zinc-400 dark:text-zinc-600 mt-2">
               SKU: {product.sku}
             </p>
           </div>
@@ -181,30 +181,30 @@ export const ProductDetail: React.FC<Props> = ({ slug }) => {
             <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-50 uppercase tracking-wider mb-2">
               Description
             </h3>
-            <p className="text-sm leading-6 text-zinc-650 dark:text-zinc-350">
+            <p className="text-sm leading-6 text-zinc-600 dark:text-zinc-400">
               {product.description}
             </p>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="flex items-center gap-3 p-4 rounded-2xl border border-zinc-200/50 bg-white dark:border-zinc-800 dark:bg-zinc-900 shadow-xs">
-              <Truck className="h-5 w-5 text-indigo-655 shrink-0" />
+              <Truck className="h-5 w-5 text-indigo-600 shrink-0" />
               <div>
                 <p className="text-xs font-bold text-zinc-900 dark:text-zinc-50">
                   Free Delivery
                 </p>
-                <p className="text-[10px] text-zinc-450 dark:text-zinc-500">
+                <p className="text-[10px] text-zinc-500 dark:text-zinc-500">
                   For orders above $100
                 </p>
               </div>
             </div>
             <div className="flex items-center gap-3 p-4 rounded-2xl border border-zinc-200/50 bg-white dark:border-zinc-800 dark:bg-zinc-900 shadow-xs">
-              <ShieldCheck className="h-5 w-5 text-indigo-655 shrink-0" />
+              <ShieldCheck className="h-5 w-5 text-indigo-600 shrink-0" />
               <div>
                 <p className="text-xs font-bold text-zinc-900 dark:text-zinc-50">
                   Secure Checkout
                 </p>
-                <p className="text-[10px] text-zinc-455 dark:text-zinc-500">
+                <p className="text-[10px] text-zinc-500 dark:text-zinc-500">
                   Stripe encrypted payment
                 </p>
               </div>

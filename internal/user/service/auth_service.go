@@ -6,6 +6,7 @@ import (
 
 	"github.com/misbahul-alam/cartify-platform/internal/shared/auth"
 	"github.com/misbahul-alam/cartify-platform/internal/user/repository"
+	"gorm.io/gorm"
 )
 
 type AuthService struct {
@@ -26,6 +27,9 @@ func (s *AuthService) Register(firstName string, lastName string, email string, 
 	_, err := s.repo.FindUserByEmail(email)
 	if err == nil {
 		return errors.New("user already exists")
+	}
+	if !errors.Is(err, gorm.ErrRecordNotFound) {
+		return fmt.Errorf("failed to check existing user: %w", err)
 	}
 
 	hashPassword, err := auth.HashPassword(password)
@@ -83,7 +87,7 @@ func (s *AuthService) RefreshToken(token string) (string, error) {
 		return "", errors.New("invalid token")
 	}
 
-	newToken, err := s.jwt.GenerateAccess(claims.ID, string(claims.Role))
+	newToken, err := s.jwt.GenerateAccess(claims.UserID, string(claims.Role))
 	if err != nil {
 		return "", err
 

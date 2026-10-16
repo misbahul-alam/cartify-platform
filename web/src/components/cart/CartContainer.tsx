@@ -75,7 +75,7 @@ export const CartContainer: React.FC = () => {
         </h1>
         <button
           onClick={clearCart}
-          className="text-xs font-semibold text-red-650 hover:text-red-500 transition-colors cursor-pointer"
+          className="text-xs font-semibold text-red-600 hover:text-red-500 transition-colors cursor-pointer"
         >
           Clear All Items
         </button>
@@ -105,7 +105,7 @@ export const CartContainer: React.FC = () => {
                     {item.product.name}
                   </h3>
                 </Link>
-                <p className="text-xs text-zinc-405 capitalize mt-0.5">
+                <p className="text-xs text-zinc-400 capitalize mt-0.5">
                   {item.product.category?.name || "Product"}
                 </p>
                 <p className="text-xs text-zinc-950 dark:text-zinc-50 font-bold mt-1">
@@ -176,7 +176,7 @@ export const CartContainer: React.FC = () => {
               <div className="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400">
                 <span>Shipping</span>
                 {shippingCost === 0 ? (
-                  <span className="font-bold text-green-650 dark:text-green-400 uppercase text-[9px] tracking-wider">
+                  <span className="font-bold text-green-600 dark:text-green-400 uppercase text-[9px] tracking-wider">
                     Free
                   </span>
                 ) : (
@@ -191,7 +191,7 @@ export const CartContainer: React.FC = () => {
 
               {shippingCost > 0 && (
                 <div className="flex items-start gap-2 bg-indigo-50/50 p-3 rounded-xl border border-indigo-100/50 text-[10px] text-indigo-700 dark:bg-indigo-950/20 dark:border-indigo-950/30 dark:text-indigo-400">
-                  <Info className="h-4.5 w-4.5 shrink-0 text-indigo-550" />
+                  <Info className="h-4.5 w-4.5 shrink-0 text-indigo-600" />
                   <span>
                     Add{" "}
                     <span className="font-bold">

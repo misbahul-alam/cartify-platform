@@ -2,6 +2,7 @@ package config
 
 import (
 	"log"
+	"strings"
 	"time"
 
 	"github.com/spf13/viper"
@@ -36,6 +37,10 @@ type Config struct {
 		SecretKey     string
 		WebhookSecret string
 		Currency      string
+	}
+
+	CORS struct {
+		AllowedOrigins []string
 	}
 }
 
@@ -80,6 +85,19 @@ func Load() *Config {
 	cfg.Stripe.WebhookSecret = v.GetString("STRIPE_WEBHOOK_SECRET")
 	v.SetDefault("STRIPE_CURRENCY", "usd")
 	cfg.Stripe.Currency = v.GetString("STRIPE_CURRENCY")
+
+	v.SetDefault("CORS_ALLOWED_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000")
+	for _, origin := range strings.Split(v.GetString("CORS_ALLOWED_ORIGINS"), ",") {
+		trimmed := strings.TrimSpace(origin)
+		if trimmed == "" {
+			continue
+		}
+		if trimmed == "*" {
+			cfg.CORS.AllowedOrigins = []string{"*"}
+			break
+		}
+		cfg.CORS.AllowedOrigins = append(cfg.CORS.AllowedOrigins, trimmed)
+	}
 
 	duration, err := time.ParseDuration(v.GetString("JWT_TTL"))
 	if err != nil {

@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
 import { Button } from "@/components/ui";
+import { getErrorMessage } from "@/lib/errors";
 
 type PaymentFormProps = {
   clientSecret: string;
@@ -54,8 +55,8 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
       } else {
         onError("Payment not completed.");
       }
-    } catch (err: any) {
-      onError(err?.message || "Payment error");
+    } catch (error: unknown) {
+      onError(getErrorMessage(error, "Payment error"));
     } finally {
       setProcessing(false);
     }

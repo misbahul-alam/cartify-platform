@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { Button, Input } from "@/components/ui";
 import { useAuthStore } from "@/store/useAuthStore";
+import { getErrorMessage } from "@/lib/errors";
 
 export function SignupForm() {
   const register = useAuthStore((state) => state.register);
@@ -39,11 +40,12 @@ export function SignupForm() {
         last_name: lastName,
         email,
         password,
+        confirm_password: confirmPassword,
       });
       setSuccess(true);
       setTimeout(() => router.push("/signin"), 3000);
-    } catch (err: any) {
-      setError(err.message || "Registration failed");
+    } catch (error: unknown) {
+      setError(getErrorMessage(error, "Registration failed"));
     } finally {
       setLoading(false);
     }

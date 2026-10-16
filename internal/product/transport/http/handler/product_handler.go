@@ -21,7 +21,6 @@ func NewProductHandler(service service.ProductService) *ProductHandler {
 	return &ProductHandler{service}
 }
 
-// GetAll godoc
 // @Summary      Get all products
 // @Description  Get a list of all products with pagination
 // @Tags         products
@@ -49,7 +48,6 @@ func (h *ProductHandler) GetAll(c *gin.Context) {
 	})
 }
 
-// GetById godoc
 // @Summary      Get product by ID
 // @Description  Get details of a single product by its UUID
 // @Tags         products
@@ -76,7 +74,6 @@ func (h *ProductHandler) GetById(c *gin.Context) {
 	response.Success(c, http.StatusOK, "Product retrieved successfully", product, nil)
 }
 
-// GetBySlug godoc
 // @Summary      Get product by Slug
 // @Description  Get details of a single product by its URL slug
 // @Tags         products
@@ -97,7 +94,6 @@ func (h *ProductHandler) GetBySlug(c *gin.Context) {
 	response.Success(c, http.StatusOK, "Product retrieved successfully", product, nil)
 }
 
-// Create godoc
 // @Summary      Create product
 // @Description  Create a new product (Admin only)
 // @Tags         products
@@ -118,14 +114,13 @@ func (h *ProductHandler) Create(c *gin.Context) {
 
 	err := h.service.Create(req.SKU, req.Name, req.Slug, req.Description, req.Price, req.CategoryID, req.IsStock, req.IsFeatured)
 	if err != nil {
-		response.InternalServerError(c, err.Error())
+		response.InternalServerError(c, "internal server error")
 		return
 	}
 
 	response.Success(c, http.StatusCreated, "Product Created", nil, nil)
 }
 
-// Update godoc
 // @Summary      Update product
 // @Description  Update product details by its UUID (Admin only)
 // @Tags         products
@@ -160,7 +155,6 @@ func (h *ProductHandler) Update(c *gin.Context) {
 	response.Success(c, http.StatusOK, "Product Updated", nil, nil)
 }
 
-// Delete godoc
 // @Summary      Delete product
 // @Description  Delete a product by its UUID (Admin only)
 // @Tags         products
@@ -186,7 +180,6 @@ func (h *ProductHandler) Delete(c *gin.Context) {
 	response.Success(c, http.StatusOK, "Product Deleted", nil, nil)
 }
 
-// UploadImage godoc
 // @Summary      Upload product image
 // @Description  Upload an image file for a product (Admin only)
 // @Tags         products
@@ -217,14 +210,13 @@ func (h *ProductHandler) UploadImage(c *gin.Context) {
 
 	err = h.service.UploadImage(c.Request.Context(), id, file)
 	if err != nil {
-		response.InternalServerError(c, err.Error())
+		response.InternalServerError(c, "internal server error")
 		return
 	}
 
 	response.Success(c, http.StatusOK, "Image Uploaded", nil, nil)
 }
 
-// DeleteImage godoc
 // @Summary      Delete product image
 // @Description  Delete an image from a product by its UUID (Admin only)
 // @Tags         products
@@ -254,14 +246,13 @@ func (h *ProductHandler) DeleteImage(c *gin.Context) {
 
 	err = h.service.DeleteImage(c.Request.Context(), productID, imageID)
 	if err != nil {
-		response.InternalServerError(c, err.Error())
+		response.InternalServerError(c, "internal server error")
 		return
 	}
 
 	response.Success(c, http.StatusOK, "Image Deleted", nil, nil)
 }
 
-// SetPrimaryImage godoc
 // @Summary      Set primary image
 // @Description  Set an image as the primary cover image for a product (Admin only)
 // @Tags         products
@@ -291,7 +282,7 @@ func (h *ProductHandler) SetPrimaryImage(c *gin.Context) {
 
 	err = h.service.SetPrimaryImage(productID, imageID)
 	if err != nil {
-		response.InternalServerError(c, err.Error())
+		response.InternalServerError(c, "internal server error")
 		return
 	}
 

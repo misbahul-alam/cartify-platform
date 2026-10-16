@@ -1,4 +1,5 @@
 import { api, configureAxiosAuth } from "@/lib/axios";
+import { getErrorMessage } from "@/lib/errors";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -22,6 +23,7 @@ interface RegisterDto {
   last_name: string;
   email: string;
   password: string;
+  confirm_password: string;
 }
 
 interface UpdateProfileDto {
@@ -99,20 +101,16 @@ export const useAuthStore = create<AuthState>()(
             refreshToken: data?.data?.refresh_token,
           });
 
-          console.log("Access Token:", data?.data?.access_token);
-          console.log("Refresh Token:", data?.data?.refresh_token);
-
           const profile = await api.get<User>("/users/me");
 
           set({
             user: profile.data,
             loading: false,
           });
-        } catch (error: any) {
+        } catch (error: unknown) {
           set({
             loading: false,
-            error:
-              error.response?.data?.message ?? error.message ?? "Login failed",
+            error: getErrorMessage(error, "Login failed"),
           });
 
           throw error;
@@ -131,13 +129,10 @@ export const useAuthStore = create<AuthState>()(
           set({
             loading: false,
           });
-        } catch (error: any) {
+        } catch (error: unknown) {
           set({
             loading: false,
-            error:
-              error.response?.data?.message ??
-              error.message ??
-              "Registration failed",
+            error: getErrorMessage(error, "Registration failed"),
           });
 
           throw error;
@@ -152,7 +147,7 @@ export const useAuthStore = create<AuthState>()(
         }
 
         try {
-          const { data } = await api.post<AuthResponse>("/auth/refresh", {
+          const { data } = await api.post<AuthResponse>("/auth/refresh-token", {
             refresh_token: refreshToken,
           });
 
@@ -185,19 +180,16 @@ export const useAuthStore = create<AuthState>()(
         });
 
         try {
-          const { data } = await api.put<User>("/users/me", payload);
+          const { data } = await api.patch<User>("/users", payload);
 
           set({
             user: data,
             loading: false,
           });
-        } catch (error: any) {
+        } catch (error: unknown) {
           set({
             loading: false,
-            error:
-              error.response?.data?.message ??
-              error.message ??
-              "Profile update failed",
+            error: getErrorMessage(error, "Profile update failed"),
           });
 
           throw error;

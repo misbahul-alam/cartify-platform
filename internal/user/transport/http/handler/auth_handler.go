@@ -18,7 +18,6 @@ func NewAuthHandler(service *service.AuthService) *AuthHandler {
 	return &AuthHandler{service: service}
 }
 
-// Login godoc
 // @Summary User Login
 // @Description Authenticate user with email and password to receive JWT access and refresh tokens.
 // @Tags Auth
@@ -39,13 +38,12 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	res, err := h.service.Login(req.Email, req.Password)
 
 	if err != nil {
-		response.BadRequest(c, err.Error(), nil)
+		response.Error(c, http.StatusUnauthorized, err.Error(), nil)
 		return
 	}
 	response.Success(c, http.StatusOK, "Login successful", gin.H{"access_token": res.AccessToken, "refresh_token": res.RefreshToken}, nil)
 }
 
-// Register godoc
 // @Summary User Registration
 // @Description Create a new user account with first name, last name, email, and password.
 // @Tags Auth
@@ -71,7 +69,6 @@ func (h *AuthHandler) Register(c *gin.Context) {
 	response.Success(c, http.StatusCreated, "Registration successful", nil, nil)
 }
 
-// RefreshToken godoc
 // @Summary Refresh Access Token
 // @Description Generate a new access token using a valid refresh token.
 // @Tags Auth

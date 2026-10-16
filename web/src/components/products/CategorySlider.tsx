@@ -87,7 +87,6 @@ export const CategorySlider: React.FC = () => {
               </div>
             </div>
 
-            {/* Bottom Card Footer */}
             <div className="mt-4 flex items-center justify-between border-t border-zinc-100 pt-3 text-xs font-semibold text-zinc-600 transition-colors group-hover:text-indigo-600 dark:border-zinc-800/80 dark:text-zinc-400 dark:group-hover:text-indigo-400">
               <span>Shop department</span>
               <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1" />

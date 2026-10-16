@@ -27,6 +27,16 @@ var (
 	ErrInvalidItemQuantity  = errors.New("order item quantity must be greater than zero")
 )
 
+const FreeShippingThreshold = 100.0
+const StandardShippingFee = 9.99
+
+func ShippingCost(subtotal float64) float64 {
+	if subtotal <= 0 || subtotal >= FreeShippingThreshold {
+		return 0
+	}
+	return StandardShippingFee
+}
+
 type OrderItem struct {
 	ID           uuid.UUID `json:"id"`
 	OrderID      uuid.UUID `json:"order_id"`

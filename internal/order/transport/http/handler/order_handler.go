@@ -22,7 +22,6 @@ func NewOrderHandler(service service.OrderService) *OrderHandler {
 	return &OrderHandler{service: service}
 }
 
-// CreateOrder godoc
 // @Summary Create Order from Cart
 // @Description Checkout the items in the cart and create a pending order.
 // @Tags Orders
@@ -56,7 +55,6 @@ func (h *OrderHandler) CreateOrder(c *gin.Context) {
 	response.Success(c, http.StatusCreated, "Order created successfully", h.toOrderResponse(order), nil)
 }
 
-// GetOrder godoc
 // @Summary Get Order by ID
 // @Description Retrieve details of a specific order.
 // @Tags Orders
@@ -102,7 +100,6 @@ func (h *OrderHandler) GetOrder(c *gin.Context) {
 	response.Success(c, http.StatusOK, "Order retrieved successfully", h.toOrderResponse(order), nil)
 }
 
-// ListUserOrders godoc
 // @Summary List User Orders
 // @Description Retrieve a list of paginated orders for the authenticated user.
 // @Tags Orders
@@ -126,7 +123,7 @@ func (h *OrderHandler) ListUserOrders(c *gin.Context) {
 
 	orders, total, err := h.service.ListUserOrders(c.Request.Context(), userID, page, limit)
 	if err != nil {
-		response.InternalServerError(c, err.Error())
+		response.InternalServerError(c, "internal server error")
 		return
 	}
 
@@ -137,7 +134,6 @@ func (h *OrderHandler) ListUserOrders(c *gin.Context) {
 	})
 }
 
-// ListAllOrders godoc
 // @Summary List All Orders (Admin/Seller)
 // @Description Retrieve a paginated list of all orders.
 // @Tags Orders
@@ -157,7 +153,7 @@ func (h *OrderHandler) ListAllOrders(c *gin.Context) {
 
 	orders, total, err := h.service.ListAllOrders(c.Request.Context(), page, limit)
 	if err != nil {
-		response.InternalServerError(c, err.Error())
+		response.InternalServerError(c, "internal server error")
 		return
 	}
 
@@ -168,7 +164,6 @@ func (h *OrderHandler) ListAllOrders(c *gin.Context) {
 	})
 }
 
-// CancelOrder godoc
 // @Summary Cancel Order
 // @Description Cancel a pending or processing order.
 // @Tags Orders
@@ -214,7 +209,6 @@ func (h *OrderHandler) CancelOrder(c *gin.Context) {
 	response.Success(c, http.StatusOK, "Order cancelled successfully", nil, nil)
 }
 
-// UpdateOrderStatus godoc
 // @Summary Update Order Status (Admin/Seller)
 // @Description Update the status of an order.
 // @Tags Orders

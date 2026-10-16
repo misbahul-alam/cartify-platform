@@ -5,7 +5,6 @@ import Link from "next/link";
 
 import {
   ShoppingCart,
-  User as UserIcon,
   LogOut,
   ShoppingBag,
   History,

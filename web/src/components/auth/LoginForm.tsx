@@ -7,6 +7,7 @@ import { AlertCircle, Lock, Mail, ShoppingBag } from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
 import { Button, Input } from "@/components/ui";
 import { useAuthStore } from "@/store/useAuthStore";
+import { getErrorMessage } from "@/lib/errors";
 
 export function LoginForm() {
   const user = useAuthStore((state) => state.user);
@@ -32,8 +33,8 @@ export function LoginForm() {
       await login({ email, password });
       await syncCartWithServer();
       router.push(redirectUrl);
-    } catch (err: any) {
-      setError(err.message || "Invalid email or password");
+    } catch (error: unknown) {
+      setError(getErrorMessage(error, "Invalid email or password"));
     } finally {
       setLoading(false);
     }

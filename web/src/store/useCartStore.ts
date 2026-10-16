@@ -9,6 +9,12 @@ interface CartItem {
   subtotal: number;
 }
 
+interface ServerCartItem {
+  product: Product;
+  quantity: number;
+  subtotal: number;
+}
+
 interface CartState {
   items: CartItem[];
   totalPrice: number;
@@ -85,11 +91,13 @@ export const useCartStore = create<CartState>((set, get) => ({
     try {
       const res = await api.get("/cart");
       if (res.data && res.data.success) {
-        const mappedItems = (res.data.data.items || []).map((item: any) => ({
-          product: item.product,
-          quantity: item.quantity,
-          subtotal: item.subtotal || item.product.price * item.quantity,
-        }));
+        const mappedItems = (res.data.data.items || []).map(
+          (item: ServerCartItem) => ({
+            product: item.product,
+            quantity: item.quantity,
+            subtotal: item.subtotal || item.product.price * item.quantity,
+          }),
+        );
         set({ items: mappedItems });
         get().recalculate();
       }
@@ -111,7 +119,7 @@ export const useCartStore = create<CartState>((set, get) => ({
           const localItems = JSON.parse(savedCart) as CartItem[];
           for (const item of localItems) {
             await api.post("/cart/items", {
-              product: item.product.id,
+              product_id: item.product.id,
               quantity: item.quantity,
             });
           }
@@ -143,7 +151,7 @@ export const useCartStore = create<CartState>((set, get) => ({
       const existingItemIndex = items.findIndex(
         (item) => item.product.id === product.id,
       );
-      let newItems = [...items];
+      const newItems = [...items];
 
       if (existingItemIndex > -1) {
         const newQty = newItems[existingItemIndex].quantity + quantity;
@@ -178,7 +186,10 @@ export const useCartStore = create<CartState>((set, get) => ({
     const token = useAuthStore.getState().accessToken;
     if (token) {
       try {
-        const res = await api.put(`/cart/items/${productId}`, { quantity });
+        const res = await api.put("/cart/items", {
+          product_id: productId,
+          quantity,
+        });
         if (res.data && res.data.success) {
           await get().fetchCart();
         }

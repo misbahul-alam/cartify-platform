@@ -21,7 +21,6 @@ func NewCategoryHandler(service service.CategoryService) *CategoryHandler {
 	return &CategoryHandler{service}
 }
 
-// GetAll godoc
 // @Summary      Get all categories
 // @Description  Get a list of all categories with pagination
 // @Tags         categories
@@ -49,7 +48,6 @@ func (h *CategoryHandler) GetAll(c *gin.Context) {
 	})
 }
 
-// GetById godoc
 // @Summary      Get category by ID
 // @Description  Get details of a single category by its UUID
 // @Tags         categories
@@ -75,7 +73,6 @@ func (h *CategoryHandler) GetById(c *gin.Context) {
 	response.Success(c, http.StatusOK, "Category retrieved successfully", category, nil)
 }
 
-// GetBySlug godoc
 // @Summary      Get category by Slug
 // @Description  Get details of a single category by its URL slug
 // @Tags         categories
@@ -95,7 +92,6 @@ func (h *CategoryHandler) GetBySlug(c *gin.Context) {
 	response.Success(c, http.StatusOK, "Category retrieved successfully", category, nil)
 }
 
-// Create godoc
 // @Summary      Create category
 // @Description  Create a new category (Admin only)
 // @Tags         categories
@@ -116,14 +112,13 @@ func (h *CategoryHandler) Create(c *gin.Context) {
 
 	err := h.service.Create(req.Name, req.Slug, req.Description, req.ImageUrl, req.ParentID)
 	if err != nil {
-		response.InternalServerError(c, err.Error())
+		response.InternalServerError(c, "internal server error")
 		return
 	}
 
 	response.Success(c, http.StatusCreated, "Category Created", nil, nil)
 }
 
-// Update godoc
 // @Summary      Update category
 // @Description  Update category details by its UUID (Admin only)
 // @Tags         categories
@@ -163,7 +158,6 @@ func (h *CategoryHandler) Update(c *gin.Context) {
 	response.Success(c, http.StatusOK, "Category Updated", nil, nil)
 }
 
-// Delete godoc
 // @Summary      Delete category
 // @Description  Delete a category by its UUID (Admin only)
 // @Tags         categories
