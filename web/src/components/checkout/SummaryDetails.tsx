@@ -24,52 +24,48 @@ const SummaryDetails: React.FC<SummaryDetailsProps> = ({
 }) => {
   return (
     <>
-      <h2 className="text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-50 mb-6 pb-4 border-b border-zinc-100 dark:border-zinc-800">
-        Summary Recap
+      <h2 className="font-display text-xl font-semibold text-ink">
+        Your order
       </h2>
 
-      <div className="space-y-4 max-h-48 overflow-y-auto mb-6">
+      <div className="mt-5 max-h-48 space-y-3.5 overflow-y-auto">
         {items.map((item) => (
           <div
             key={item.product.id}
-            className="flex justify-between items-center text-xs gap-3"
+            className="flex items-center justify-between gap-3 text-sm"
           >
-            <span className="text-zinc-700 dark:text-zinc-300 truncate max-w-[150px]">
+            <span className="truncate text-ink-muted">
               {item.product.name}{" "}
-              <span className="text-zinc-400">x{item.quantity}</span>
+              <span className="text-ink-subtle">×{item.quantity}</span>
             </span>
-            <span className="font-semibold text-zinc-900 dark:text-zinc-50">
+            <span className="shrink-0 font-medium text-ink">
               ${item.subtotal.toFixed(2)}
             </span>
           </div>
         ))}
       </div>
 
-      <div className="space-y-4 pt-4 border-t border-zinc-100 dark:border-zinc-800">
-        <div className="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400">
-          <span>Items Total</span>
-          <span className="font-bold text-zinc-900 dark:text-zinc-50">
-            ${totalPrice.toFixed(2)}
-          </span>
+      <div className="mt-5 space-y-3.5 border-t border-line pt-4">
+        <div className="flex items-center justify-between text-sm text-ink-muted">
+          <span>Items</span>
+          <span className="font-medium text-ink">${totalPrice.toFixed(2)}</span>
         </div>
-        <div className="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400">
+        <div className="flex items-center justify-between text-sm text-ink-muted">
           <span>Shipping</span>
           {shippingCost === 0 ? (
-            <span className="font-bold text-green-600 dark:text-green-400 uppercase text-[9px] tracking-wider">
+            <span className="text-xs font-semibold uppercase tracking-wide text-success">
               Free
             </span>
           ) : (
-            <span className="font-bold text-zinc-900 dark:text-zinc-50">
+            <span className="font-medium text-ink">
               ${shippingCost.toFixed(2)}
             </span>
           )}
         </div>
 
-        <div className="border-t border-zinc-100 dark:border-zinc-800 pt-4 flex items-center justify-between">
-          <span className="text-xs font-bold text-zinc-900 dark:text-zinc-50">
-            Grand Total
-          </span>
-          <span className="text-xl font-extrabold text-zinc-950 dark:text-zinc-50">
+        <div className="flex items-center justify-between border-t border-line pt-4">
+          <span className="text-sm font-semibold text-ink">Total</span>
+          <span className="font-display text-2xl font-semibold text-ink">
             ${finalTotal.toFixed(2)}
           </span>
         </div>

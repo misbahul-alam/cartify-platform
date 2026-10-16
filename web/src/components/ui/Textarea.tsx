@@ -21,7 +21,7 @@ export function Textarea({
         <label
           htmlFor={id}
           className={cn(
-            "mb-2 block text-sm font-medium text-zinc-700 dark:text-zinc-300",
+            "mb-2 block text-sm font-medium text-ink",
             labelClassName,
           )}
         >
@@ -31,7 +31,7 @@ export function Textarea({
       <textarea
         id={id}
         className={cn(
-          "block w-full rounded-xl border border-zinc-200 bg-white p-3 text-sm text-zinc-900 outline-none ring-offset-2 ring-indigo-500 transition-colors placeholder:text-zinc-400 focus:border-indigo-500 focus:ring-2 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-50 dark:ring-offset-zinc-900",
+          "w-full rounded-xl border border-line bg-surface px-4 py-3 text-sm text-ink outline-none transition-colors placeholder:text-ink-subtle focus:border-accent focus:ring-4 focus:ring-accent/10 disabled:opacity-50",
           className,
         )}
         {...props}

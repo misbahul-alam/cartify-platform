@@ -3,12 +3,12 @@
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
-  History,
-  XCircle,
   CheckCircle2,
   Clock,
-  HelpCircle,
+  History,
+  Package,
   Truck,
+  XCircle,
 } from "lucide-react";
 import {
   Breadcrumb,
@@ -21,110 +21,85 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { useOrdersStore } from "@/store/useOrdersStore";
 import { getErrorMessage } from "@/lib/errors";
 
+const statusStyles: Record<string, string> = {
+  delivered: "bg-success-soft text-success",
+  paid: "bg-accent-soft text-accent-strong",
+  shipped: "bg-accent-soft text-accent-strong",
+  processing: "bg-warning-soft text-warning",
+  pending: "bg-warning-soft text-warning",
+  cancelled: "bg-danger-soft text-danger",
+};
+
+const statusIcons: Record<string, React.ComponentType<{ className?: string }>> =
+  {
+    delivered: CheckCircle2,
+    paid: CheckCircle2,
+    shipped: Truck,
+    processing: Clock,
+    pending: Clock,
+    cancelled: XCircle,
+  };
+
+const formatDate = (value: string) => {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
+
 export const OrderHistory: React.FC = () => {
   const user = useAuthStore((state) => state.user);
   const router = useRouter();
-  const { orders, loading, error, fetchOrders, cancelOrder } = useOrdersStore();
+  const orders = useOrdersStore((state) => state.orders);
+  const loading = useOrdersStore((state) => state.loading);
+  const error = useOrdersStore((state) => state.error);
+  const fetchOrders = useOrdersStore((state) => state.fetchOrders);
+  const cancelOrder = useOrdersStore((state) => state.cancelOrder);
 
   useEffect(() => {
     if (!user) {
       router.push("/signin?redirect=/orders");
       return;
     }
-
-    async function loadOrders() {
-      await fetchOrders(1, 50);
-    }
-
-    loadOrders();
-  }, [user]);
+    fetchOrders(1, 50);
+  }, [user, router, fetchOrders]);
 
   const handleCancelOrder = async (id: string) => {
-    if (!confirm("Are you sure you want to cancel this order?")) return;
+    if (!window.confirm("Are you sure you want to cancel this order?")) return;
     try {
       await cancelOrder(id);
-    } catch (error: unknown) {
-      alert(getErrorMessage(error, "Failed to cancel order"));
+    } catch (cancelError: unknown) {
+      window.alert(getErrorMessage(cancelError, "Failed to cancel order"));
     }
   };
 
-  const formatDate = (dateStr: string) => {
-    try {
-      const d = new Date(dateStr);
-      return d.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-    } catch {
-      return dateStr;
-    }
-  };
-
-  const getStatusBadge = (status: string) => {
-    const uppercaseStatus = status.toLowerCase();
-    switch (uppercaseStatus) {
-      case "delivered":
-        return (
-          <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2.5 py-1 text-xs font-bold text-green-700 dark:bg-green-950/20 dark:text-green-400 uppercase tracking-wider">
-            <CheckCircle2 className="h-3.5 w-3.5" />
-            Delivered
-          </span>
-        );
-      case "paid":
-        return (
-          <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-bold text-blue-700 dark:bg-blue-950/20 dark:text-blue-400 uppercase tracking-wider">
-            <CheckCircle2 className="h-3.5 w-3.5" />
-            Paid
-          </span>
-        );
-      case "cancelled":
-        return (
-          <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2.5 py-1 text-xs font-bold text-red-700 dark:bg-red-950/20 dark:text-red-400 uppercase tracking-wider">
-            <XCircle className="h-3.5 w-3.5" />
-            Cancelled
-          </span>
-        );
-      case "pending":
-        return (
-          <span className="inline-flex items-center gap-1 rounded-full bg-yellow-50 px-2.5 py-1 text-xs font-bold text-yellow-700 dark:bg-yellow-950/20 dark:text-yellow-400 uppercase tracking-wider">
-            <Clock className="h-3.5 w-3.5" />
-            Pending
-          </span>
-        );
-      case "processing":
-        return (
-          <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-bold text-indigo-700 dark:bg-indigo-950/20 dark:text-indigo-400 uppercase tracking-wider">
-            <Clock className="h-3.5 w-3.5" />
-            Processing
-          </span>
-        );
-      case "shipped":
-        return (
-          <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-bold text-indigo-700 dark:bg-indigo-950/20 dark:text-indigo-400 uppercase tracking-wider">
-            <Truck className="h-3.5 w-3.5" />
-            Shipped
-          </span>
-        );
-      default:
-        return (
-          <span className="inline-flex items-center gap-1 rounded-full bg-zinc-50 px-2.5 py-1 text-xs font-bold text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 uppercase tracking-wider">
-            <HelpCircle className="h-3.5 w-3.5" />
-            {status}
-          </span>
-        );
-    }
+  const renderStatus = (status: string) => {
+    const key = status.toLowerCase();
+    const Icon = statusIcons[key] || Package;
+    return (
+      <span
+        className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-medium capitalize ${
+          statusStyles[key] || "bg-surface-muted text-ink-muted"
+        }`}
+      >
+        <Icon className="h-3.5 w-3.5" />
+        {key}
+      </span>
+    );
   };
 
   if (loading) {
     return (
-      <div className="mx-auto max-w-7xl w-full px-4 py-16 sm:px-6 lg:px-8">
-        <SkeletonBlock className="h-10 w-1/4 mb-8" />
+      <div className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <SkeletonBlock className="mb-8 h-10 w-1/4" />
         <div className="space-y-6">
-          {[...Array(2)].map((_, i) => (
-            <SkeletonRow key={i} className="h-48" />
+          {Array.from({ length: 2 }).map((_, index) => (
+            <SkeletonRow key={index} className="h-48" />
           ))}
         </div>
       </div>
@@ -135,9 +110,9 @@ export const OrderHistory: React.FC = () => {
     return (
       <EmptyState
         icon={XCircle}
-        title={error}
-        description="Something went wrong loading your orders."
-        actionLabel="Retry Loading"
+        title="We could not load your orders"
+        description="Something went wrong while fetching your order history."
+        actionLabel="Try again"
         onActionClick={() => window.location.reload()}
       />
     );
@@ -147,54 +122,59 @@ export const OrderHistory: React.FC = () => {
     return (
       <EmptyState
         icon={History}
-        title="No orders found"
-        description="You haven't placed any orders on this account yet."
-        actionLabel="Explore Catalog"
+        title="No orders yet"
+        description="Once you place an order it will show up here with its status."
+        actionLabel="Explore the collection"
         actionHref="/products"
       />
     );
   }
 
   return (
-    <div className="mx-auto max-w-7xl w-full px-4 py-12 sm:px-6 lg:px-8 bg-zinc-50 dark:bg-zinc-950">
+    <div className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
       <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Orders" }]} />
 
-      <h1 className="text-3xl font-extrabold text-zinc-900 dark:text-zinc-50 tracking-tight mb-10">
-        Order History
-      </h1>
+      <div className="mb-10">
+        <h1 className="font-display text-4xl font-semibold tracking-tight text-ink">
+          Your orders
+        </h1>
+        <p className="mt-2 text-sm text-ink-muted">
+          Everything you&rsquo;ve ordered, with live status.
+        </p>
+      </div>
 
-      <div className="space-y-8">
+      <div className="space-y-6">
         {orders.map((order: Order) => (
           <div
             key={order.id}
-            className="border border-zinc-200/80 rounded-2xl bg-white shadow-sm overflow-hidden dark:border-zinc-800 dark:bg-zinc-900"
+            className="overflow-hidden rounded-2xl border border-line bg-surface"
           >
-            <div className="bg-zinc-50/70 border-b border-zinc-100 px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 dark:bg-zinc-900/50 dark:border-zinc-800">
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-8 gap-y-1">
+            <div className="flex flex-col gap-4 border-b border-line bg-surface-muted px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
+              <div className="grid grid-cols-2 gap-x-10 gap-y-4 sm:grid-cols-4">
                 <div>
-                  <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
-                    Order ID
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-ink-subtle">
+                    Order
                   </p>
                   <p
-                    className="text-xs font-mono text-zinc-700 dark:text-zinc-300 select-all truncate max-w-[120px]"
+                    className="truncate font-mono text-xs text-ink-muted"
                     title={order.id}
                   >
-                    {order.id.slice(0, 8)}...
+                    {order.id.slice(0, 8)}…
                   </p>
                 </div>
                 <div>
-                  <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
-                    Date Placed
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-ink-subtle">
+                    Placed
                   </p>
-                  <p className="text-xs text-zinc-700 dark:text-zinc-300 font-medium">
+                  <p className="text-xs font-medium text-ink-muted">
                     {formatDate(order.created_at)}
                   </p>
                 </div>
                 <div>
-                  <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
-                    Total Amount
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-ink-subtle">
+                    Total
                   </p>
-                  <p className="text-xs font-bold text-zinc-950 dark:text-zinc-50">
+                  <p className="text-sm font-semibold text-ink">
                     $
                     {order.total_price.toLocaleString("en-US", {
                       minimumFractionDigits: 2,
@@ -202,11 +182,11 @@ export const OrderHistory: React.FC = () => {
                   </p>
                 </div>
                 <div>
-                  <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
-                    Shipping Address
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-ink-subtle">
+                    Ship to
                   </p>
                   <p
-                    className="text-xs text-zinc-600 dark:text-zinc-400 truncate max-w-[140px]"
+                    className="max-w-40 truncate text-xs text-ink-muted"
                     title={order.shipping_address}
                   >
                     {order.shipping_address}
@@ -214,40 +194,35 @@ export const OrderHistory: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 shrink-0 sm:self-center">
-                {getStatusBadge(order.status)}
-
+              <div className="flex shrink-0 items-center gap-3">
+                {renderStatus(order.status)}
                 {(order.status.toLowerCase() === "pending" ||
                   order.status.toLowerCase() === "processing") && (
                   <button
                     onClick={() => handleCancelOrder(order.id)}
-                    className="text-xs font-semibold text-red-600 hover:text-red-500 transition-colors cursor-pointer"
+                    className="cursor-pointer text-xs font-medium text-ink-muted transition-colors hover:text-danger"
                   >
-                    Cancel Order
+                    Cancel
                   </button>
                 )}
               </div>
             </div>
 
-            <div className="px-6 py-4 divide-y divide-zinc-100 dark:divide-zinc-800">
+            <div className="divide-y divide-line px-6">
               {order.items?.map((item) => (
                 <div
                   key={item.id}
-                  className="py-4 flex justify-between items-center text-sm gap-4 first:pt-2 last:pb-2"
+                  className="flex items-center justify-between gap-4 py-4"
                 >
                   <div>
-                    <h4 className="font-semibold text-zinc-900 dark:text-zinc-100">
+                    <p className="font-display text-lg font-semibold text-ink">
                       {item.product_name}
-                    </h4>
-                    <p className="text-xs text-zinc-500 mt-0.5">
-                      Quantity:{" "}
-                      <span className="font-semibold text-zinc-700 dark:text-zinc-300">
-                        {item.quantity}
-                      </span>{" "}
-                      &middot; Unit Price: ${item.product_price.toFixed(2)}
+                    </p>
+                    <p className="mt-0.5 text-xs text-ink-subtle">
+                      Qty {item.quantity} · ${item.product_price.toFixed(2)} each
                     </p>
                   </div>
-                  <span className="font-bold text-zinc-900 dark:text-zinc-50">
+                  <span className="text-sm font-semibold text-ink">
                     ${item.subtotal.toFixed(2)}
                   </span>
                 </div>

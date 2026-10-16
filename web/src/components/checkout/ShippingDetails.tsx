@@ -14,11 +14,13 @@ const ShippingDetails: React.FC<ShippingDetailsProps> = ({
   setShippingAddress,
 }) => {
   return (
-    <div className="border border-zinc-200/80 rounded-2xl bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900 shadow-xs">
-      <div className="flex items-center gap-2 pb-4 mb-6 border-b border-zinc-100 dark:border-zinc-800 text-zinc-900 dark:text-zinc-50">
-        <MapPin className="h-5 w-5 text-indigo-600" />
-        <h2 className="text-xs font-bold uppercase tracking-wider">
-          Shipping Details
+    <div className="rounded-2xl border border-line bg-surface p-6 sm:p-8">
+      <div className="flex items-center gap-3">
+        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-accent-soft text-accent">
+          <MapPin className="h-4 w-4" />
+        </span>
+        <h2 className="font-display text-xl font-semibold text-ink">
+          Shipping details
         </h2>
       </div>
 
@@ -27,10 +29,9 @@ const ShippingDetails: React.FC<ShippingDetailsProps> = ({
         required
         rows={3}
         value={shippingAddress}
-        onChange={(e) => setShippingAddress(e.target.value)}
-        placeholder="123 Main St, Apt 4B, New York, NY 10001"
-        label="Full Shipping Address"
-        labelClassName="mb-2 text-[10px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500"
+        onChange={(event) => setShippingAddress(event.target.value)}
+        placeholder="Street address, city, postal code, country"
+        containerClassName="mt-6"
       />
     </div>
   );

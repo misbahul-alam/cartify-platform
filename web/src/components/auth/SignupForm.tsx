@@ -3,14 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {
-  AlertCircle,
-  CheckCircle,
-  Lock,
-  Mail,
-  ShoppingBag,
-  User as UserIcon,
-} from "lucide-react";
+import { AlertCircle, CheckCircle2, Lock, Mail } from "lucide-react";
 import { Button, Input } from "@/components/ui";
 import { useAuthStore } from "@/store/useAuthStore";
 import { getErrorMessage } from "@/lib/errors";
@@ -26,6 +19,7 @@ export function SignupForm() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
+
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     setError(null);
@@ -43,126 +37,113 @@ export function SignupForm() {
         confirm_password: confirmPassword,
       });
       setSuccess(true);
-      setTimeout(() => router.push("/signin"), 3000);
-    } catch (error: unknown) {
-      setError(getErrorMessage(error, "Registration failed"));
+      setTimeout(() => router.push("/signin"), 2500);
+    } catch (submitError: unknown) {
+      setError(getErrorMessage(submitError, "Registration failed"));
     } finally {
       setLoading(false);
     }
   }
-  const smallInput = "py-2.5 text-sm";
-  const fieldLabel = "mb-1";
+
   return (
-    <div className="flex flex-1 items-center justify-center bg-zinc-50 px-4 py-16 dark:bg-zinc-950 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-8 rounded-2xl border border-zinc-200 bg-white p-8 shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
-        <div className="text-center">
-          <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-700 dark:bg-indigo-950/50 dark:text-indigo-400">
-            <ShoppingBag className="h-6 w-6" />
-          </div>
-          <h2 className="mt-6 text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-            Create an account
-          </h2>
-          <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
-            Join Cartify to get premium shopping deals
-          </p>
-        </div>
+    <div className="flex flex-1 items-center justify-center px-4 py-16 sm:px-6">
+      <div className="w-full max-w-md rounded-[2rem] border border-line bg-surface p-8 shadow-xl shadow-black/5 sm:p-10">
+        <span className="inline-flex items-center gap-2 rounded-full bg-accent-soft px-3.5 py-1.5 text-xs font-medium text-accent-strong">
+          <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+          Join Cartify
+        </span>
+        <h1 className="mt-6 font-display text-3xl font-semibold tracking-tight text-ink">
+          Create your account
+        </h1>
+        <p className="mt-2 text-sm text-ink-muted">
+          Save your cart and follow every order from one place.
+        </p>
+
         {success ? (
-          <div className="flex flex-col items-center gap-3 rounded-lg bg-green-50 p-6 text-center text-sm text-green-800 dark:bg-green-950/20 dark:text-green-400">
-            <CheckCircle className="h-10 w-10 text-green-600 dark:text-green-400" />
-            <div className="text-base font-semibold">Account Created!</div>
-            <p>
-              Registration was successful. You are being redirected to the login
-              page...
+          <div className="mt-7 flex flex-col items-center gap-3 rounded-2xl border border-success/20 bg-success-soft px-6 py-10 text-center">
+            <CheckCircle2 className="h-9 w-9 text-success" />
+            <p className="text-sm font-semibold text-ink">Account created</p>
+            <p className="text-sm text-ink-muted">
+              Taking you to sign in…
             </p>
           </div>
         ) : (
           <>
-            <>
-              {error && (
-                <div className="flex items-center gap-2 rounded-lg bg-red-50 p-4 text-sm text-red-700 dark:bg-red-950/20 dark:text-red-400">
-                  <AlertCircle className="h-5 w-5 shrink-0" />
-                  <span>{error}</span>
-                </div>
-              )}
-            </>
-            <form className="space-y-6" onSubmit={handleSubmit}>
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <Input
-                    id="first_name"
-                    required
-                    label="First Name"
-                    icon={<UserIcon className="h-4 w-4" />}
-                    value={firstName}
-                    onChange={(event) => setFirstName(event.target.value)}
-                    placeholder="John"
-                    className={smallInput}
-                    labelClassName={fieldLabel}
-                  />
-                  <Input
-                    id="last_name"
-                    required
-                    label="Last Name"
-                    icon={<UserIcon className="h-4 w-4" />}
-                    value={lastName}
-                    onChange={(event) => setLastName(event.target.value)}
-                    placeholder="Doe"
-                    className={smallInput}
-                    labelClassName={fieldLabel}
-                  />
-                </div>
+            {error && (
+              <div className="mt-6 flex items-start gap-2.5 rounded-xl border border-danger/20 bg-danger-soft px-4 py-3 text-sm text-danger">
+                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+                <span>{error}</span>
+              </div>
+            )}
+
+            <form className="mt-7 space-y-4" onSubmit={handleSubmit}>
+              <div className="grid grid-cols-2 gap-3">
                 <Input
-                  id="email"
-                  type="email"
+                  id="first_name"
                   required
-                  label="Email Address"
-                  icon={<Mail className="h-4 w-4" />}
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
-                  placeholder="john@example.com"
-                  className={smallInput}
-                  labelClassName={fieldLabel}
+                  label="First name"
+                  value={firstName}
+                  onChange={(event) => setFirstName(event.target.value)}
+                  placeholder="Jane"
                 />
                 <Input
-                  id="password"
-                  type="password"
+                  id="last_name"
                   required
-                  label="Password"
-                  icon={<Lock className="h-4 w-4" />}
-                  value={password}
-                  onChange={(event) => setPassword(event.target.value)}
-                  placeholder="Enter a password"
-                  className={smallInput}
-                  labelClassName={fieldLabel}
-                />
-                <Input
-                  id="confirm_password"
-                  type="password"
-                  required
-                  label="Confirm Password"
-                  icon={<Lock className="h-4 w-4" />}
-                  value={confirmPassword}
-                  onChange={(event) => setConfirmPassword(event.target.value)}
-                  placeholder="Repeat your password"
-                  className={smallInput}
-                  labelClassName={fieldLabel}
+                  label="Last name"
+                  value={lastName}
+                  onChange={(event) => setLastName(event.target.value)}
+                  placeholder="Doe"
                 />
               </div>
+              <Input
+                id="email"
+                type="email"
+                autoComplete="email"
+                required
+                label="Email"
+                icon={<Mail className="h-4 w-4" />}
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                placeholder="you@example.com"
+              />
+              <Input
+                id="password"
+                type="password"
+                autoComplete="new-password"
+                required
+                label="Password"
+                icon={<Lock className="h-4 w-4" />}
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                placeholder="Create a password"
+              />
+              <Input
+                id="confirm_password"
+                type="password"
+                autoComplete="new-password"
+                required
+                label="Confirm password"
+                icon={<Lock className="h-4 w-4" />}
+                value={confirmPassword}
+                onChange={(event) => setConfirmPassword(event.target.value)}
+                placeholder="Repeat your password"
+              />
               <Button type="submit" disabled={loading} fullWidth size="lg">
-                {loading ? "Creating account..." : "Sign Up"}
+                {loading ? "Creating account…" : "Create account"}
               </Button>
             </form>
-            <div className="text-center text-sm text-zinc-500 dark:text-zinc-400">
-              Already have an account?{" "}
-              <Link
-                href="/signin"
-                className="font-semibold text-indigo-600 hover:text-indigo-500 dark:text-indigo-400"
-              >
-                Log in
-              </Link>
-            </div>
           </>
         )}
+
+        <p className="mt-7 text-center text-sm text-ink-muted">
+          Already have an account?{" "}
+          <Link
+            href="/signin"
+            className="font-medium text-accent underline-offset-4 hover:underline"
+          >
+            Sign in
+          </Link>
+        </p>
       </div>
     </div>
   );

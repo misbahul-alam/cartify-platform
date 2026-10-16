@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { AlertCircle, Lock, Mail, ShoppingBag } from "lucide-react";
+import { AlertCircle, Lock, Mail } from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
 import { Button, Input } from "@/components/ui";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -33,73 +33,73 @@ export function LoginForm() {
       await login({ email, password });
       await syncCartWithServer();
       router.push(redirectUrl);
-    } catch (error: unknown) {
-      setError(getErrorMessage(error, "Invalid email or password"));
+    } catch (submitError: unknown) {
+      setError(getErrorMessage(submitError, "Invalid email or password"));
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className="flex flex-1 items-center justify-center bg-zinc-50 px-4 py-16 dark:bg-zinc-950 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-8 rounded-2xl border border-zinc-200 bg-white p-8 shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
-        <div className="text-center">
-          <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-700 dark:bg-indigo-950/50 dark:text-indigo-400">
-            <ShoppingBag className="h-6 w-6" />
-          </div>
-          <h2 className="mt-6 text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-            Welcome back
-          </h2>
-          <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
-            Sign in to access your cart and account details
-          </p>
-        </div>
+    <div className="flex flex-1 items-center justify-center px-4 py-16 sm:px-6">
+      <div className="w-full max-w-md rounded-[2rem] border border-line bg-surface p-8 shadow-xl shadow-black/5 sm:p-10">
+        <span className="inline-flex items-center gap-2 rounded-full bg-accent-soft px-3.5 py-1.5 text-xs font-medium text-accent-strong">
+          <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+          Welcome back
+        </span>
+        <h1 className="mt-6 font-display text-3xl font-semibold tracking-tight text-ink">
+          Sign in to Cartify
+        </h1>
+        <p className="mt-2 text-sm text-ink-muted">
+          Continue to your cart, orders and saved details.
+        </p>
+
         {error && (
-          <div className="flex items-center gap-2 rounded-lg bg-red-50 p-4 text-sm text-red-700 dark:bg-red-950/20 dark:text-red-400">
-            <AlertCircle className="h-5 w-5 shrink-0" />
+          <div className="mt-6 flex items-start gap-2.5 rounded-xl border border-danger/20 bg-danger-soft px-4 py-3 text-sm text-danger">
+            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
             <span>{error}</span>
           </div>
         )}
-        <form className="space-y-6" onSubmit={handleSubmit}>
-          <div className="space-y-4">
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              required
-              label="Email Address"
-              icon={<Mail className="h-5 w-5" />}
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              placeholder="name@example.com"
-            />
-            <Input
-              id="password"
-              name="password"
-              type="password"
-              autoComplete="current-password"
-              required
-              label="Password"
-              icon={<Lock className="h-5 w-5" />}
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              placeholder="Enter your password"
-            />
-          </div>
+
+        <form className="mt-7 space-y-4" onSubmit={handleSubmit}>
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            autoComplete="email"
+            required
+            label="Email"
+            icon={<Mail className="h-4 w-4" />}
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            placeholder="you@example.com"
+          />
+          <Input
+            id="password"
+            name="password"
+            type="password"
+            autoComplete="current-password"
+            required
+            label="Password"
+            icon={<Lock className="h-4 w-4" />}
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+            placeholder="Enter your password"
+          />
           <Button type="submit" disabled={loading} fullWidth size="lg">
-            {loading ? "Signing in..." : "Sign In"}
+            {loading ? "Signing in…" : "Sign in"}
           </Button>
         </form>
-        <div className="text-center text-sm text-zinc-500 dark:text-zinc-400">
-          Don&apos;t have an account?{" "}
+
+        <p className="mt-7 text-center text-sm text-ink-muted">
+          New to Cartify?{" "}
           <Link
             href="/signup"
-            className="font-semibold text-indigo-600 hover:text-indigo-500 dark:text-indigo-400"
+            className="font-medium text-accent underline-offset-4 hover:underline"
           >
-            Sign up
+            Create an account
           </Link>
-        </div>
+        </p>
       </div>
     </div>
   );

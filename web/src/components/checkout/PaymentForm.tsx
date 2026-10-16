@@ -26,6 +26,12 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
   const [cardBrand, setCardBrand] = useState<string | null>(null);
   const [cardError, setCardError] = useState<string | null>(null);
 
+  const formattedAmount = (amount ?? 0).toLocaleString("en-US", {
+    style: "currency",
+    currency: (currency || "USD").toUpperCase(),
+    minimumFractionDigits: 2,
+  });
+
   const handleConfirm = async () => {
     if (!stripe || !elements) {
       onError("Payment library not loaded");
@@ -47,10 +53,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
 
       if (result.error) {
         onError(result.error.message || "Payment failed");
-      } else if (
-        result.paymentIntent &&
-        result.paymentIntent.status === "succeeded"
-      ) {
+      } else if (result.paymentIntent?.status === "succeeded") {
         onSuccess("Payment completed successfully.");
       } else {
         onError("Payment not completed.");
@@ -63,47 +66,41 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
   };
 
   return (
-    <div className="rounded-lg border p-4 bg-white dark:bg-zinc-900">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-semibold">Payment</h3>
-        <div className="text-sm font-bold">
-          {(amount ?? 0).toLocaleString("en-US", {
-            style: "currency",
-            currency: (currency || "USD").toUpperCase(),
-            minimumFractionDigits: 2,
-          })}
-        </div>
+    <div className="rounded-2xl border border-line bg-surface p-5 text-left">
+      <div className="flex items-center justify-between">
+        <h3 className="text-sm font-semibold text-ink">Payment</h3>
+        <span className="font-display text-lg font-semibold text-ink">
+          {formattedAmount}
+        </span>
       </div>
 
-      <div className="mb-3 text-xs text-zinc-500">
-        Secure payment powered by Stripe
-      </div>
+      <p className="mt-1 text-xs text-ink-muted">
+        Secure payment powered by Stripe.
+      </p>
 
-      <div className="mb-4">
-        <div className="border rounded p-3">
+      <div className="mt-5">
+        <div className="rounded-xl border border-line p-4">
           <CardElement
             options={{ hidePostalCode: true }}
-            onChange={(e) => {
-              setCardError(e.error ? e.error.message : null);
-              setCardBrand(e.brand || null);
+            onChange={(event) => {
+              setCardError(event.error ? event.error.message : null);
+              setCardBrand(event.brand || null);
             }}
           />
         </div>
         {cardBrand && (
-          <div className="mt-2 text-xs text-zinc-600">
+          <p className="mt-2 text-xs capitalize text-ink-muted">
             Card brand: {cardBrand}
-          </div>
+          </p>
         )}
-        {cardError && (
-          <div className="mt-2 text-xs text-red-600">{cardError}</div>
-        )}
+        {cardError && <p className="mt-2 text-xs text-danger">{cardError}</p>}
       </div>
 
-      <div className="flex items-center justify-end gap-3">
+      <div className="mt-5 flex justify-end">
         <Button
           onClick={handleConfirm}
           disabled={processing || !stripe}
-          className="px-4 py-2"
+          className="min-w-32"
         >
           {processing ? "Processing…" : `Pay ${(amount ?? 0).toFixed(2)}`}
         </Button>

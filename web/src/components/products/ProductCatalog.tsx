@@ -2,60 +2,43 @@
 
 import React, { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import type { Category, Product } from "@/types";
+import { Search, Sparkles } from "lucide-react";
 import ProductCard from "./ProductCard";
-import { Search, SlidersHorizontal, Sparkles, ArrowUpDown } from "lucide-react";
-import { useCategoriesStore } from "@/store/useCategoriesStore";
-import { EmptyState, Input, Select, SkeletonCard } from "@/components/ui";
 import { useProductsStore } from "@/store/useProductsStore";
+import { useCategoriesStore } from "@/store/useCategoriesStore";
+import { EmptyState, Select, SkeletonCard } from "@/components/ui";
 
 export const ProductCatalog: React.FC = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const { loading: productsLoading, fetchProducts } = useProductsStore();
-  const { loading: categoriesLoading, fetchCategories } = useCategoriesStore();
+  const products = useProductsStore((state) => state.products);
+  const productsLoading = useProductsStore((state) => state.loading);
+  const fetchProducts = useProductsStore((state) => state.fetchProducts);
+  const categories = useCategoriesStore((state) => state.categories);
+  const categoriesLoading = useCategoriesStore((state) => state.loading);
+  const fetchCategories = useCategoriesStore((state) => state.fetchCategories);
 
-  const loading = productsLoading || categoriesLoading;
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const [sortBy, setSortBy] = useState<string>("name-asc");
-
-  useEffect(() => {
-    const catParam = searchParams.get("category");
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setSelectedCategory(catParam || "all");
-
-    const searchParam = searchParams.get("search");
-    if (searchParam) {
-      setSearchQuery(searchParam);
-    }
-  }, [searchParams]);
+  const selectedCategory = searchParams.get("category") || "all";
+  const [searchQuery, setSearchQuery] = useState(
+    () => searchParams.get("search") || "",
+  );
+  const [sortBy, setSortBy] = useState("name-asc");
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        await Promise.all([fetchProducts(1, 100), fetchCategories()]);
-        setProducts(useProductsStore.getState().products || []);
-        setCategories(useCategoriesStore.getState().categories || []);
-      } catch (err) {
-        console.error("Failed to load catalog data:", err);
-      }
-    }
-    fetchData();
-  }, []);
+    fetchProducts(1, 100);
+    fetchCategories();
+  }, [fetchProducts, fetchCategories]);
 
   const handleCategoryChange = (slug: string) => {
-    setSelectedCategory(slug);
     const params = new URLSearchParams(searchParams.toString());
     if (slug === "all") {
       params.delete("category");
     } else {
       params.set("category", slug);
     }
-    router.push(`/products?${params.toString()}`);
+    const query = params.toString();
+    router.push(query ? `/products?${query}` : "/products");
   };
 
   const filteredProducts = products
@@ -66,7 +49,6 @@ export const ProductCatalog: React.FC = () => {
       ) {
         return false;
       }
-
       if (searchQuery) {
         const query = searchQuery.toLowerCase();
         return (
@@ -85,70 +67,69 @@ export const ProductCatalog: React.FC = () => {
           return b.price - a.price;
         case "name-desc":
           return b.name.localeCompare(a.name);
-        case "name-asc":
         default:
           return a.name.localeCompare(b.name);
       }
     });
 
-  return (
-    <div className="flex flex-col lg:flex-row gap-8 items-start w-full">
-      <aside className="w-full lg:w-64 shrink-0 border border-zinc-200/80 rounded-2xl bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900 shadow-xs">
-        <div className="flex items-center gap-2 pb-4 mb-6 border-b border-zinc-100 dark:border-zinc-800 text-zinc-900 dark:text-zinc-50">
-          <SlidersHorizontal className="h-4.5 w-4.5 text-indigo-600 dark:text-indigo-400" />
-          <h2 className="text-xs font-bold uppercase tracking-wider">
-            Filters
-          </h2>
-        </div>
+  const loading = productsLoading || categoriesLoading;
 
-        <div className="mb-6">
-          <Input
-            type="text"
-            label="Search"
-            icon={<Search className="h-4 w-4" />}
+  return (
+    <div className="flex w-full flex-col gap-8 lg:flex-row lg:items-start">
+      <aside className="w-full shrink-0 rounded-2xl border border-line bg-surface p-6 lg:sticky lg:top-32 lg:w-72">
+        <h2 className="font-display text-xl font-semibold text-ink">Filters</h2>
+
+        <div className="relative mt-6">
+          <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-subtle" />
+          <input
+            type="search"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Find a product..."
-            className="py-2 text-xs"
-            labelClassName="mb-2 text-[10px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500"
+            onChange={(event) => setSearchQuery(event.target.value)}
+            placeholder="Search products"
+            className="w-full rounded-xl border border-line bg-surface py-3 pl-11 pr-4 text-sm text-ink outline-none transition-colors placeholder:text-ink-subtle focus:border-accent focus:ring-4 focus:ring-accent/10"
           />
         </div>
 
-        <div className="mb-6">
-          <label className="block text-[10px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 mb-2.5">
-            Categories
-          </label>
-          <div className="space-y-1">
+        <div className="mt-8">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-ink-subtle">
+            Category
+          </p>
+          <div className="flex flex-col gap-1">
             <button
               onClick={() => handleCategoryChange("all")}
-              className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-xs font-medium transition-colors cursor-pointer ${
+              className={`flex cursor-pointer items-center justify-between rounded-full px-4 py-2 text-left text-sm transition-colors ${
                 selectedCategory === "all"
-                  ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-400"
-                  : "text-zinc-600 hover:bg-zinc-50 dark:text-zinc-400 dark:hover:bg-zinc-800/40"
+                  ? "bg-accent text-white"
+                  : "text-ink-muted hover:bg-surface-muted hover:text-ink"
               }`}
             >
-              <span>All Categories</span>
-              <span className="text-[9px] bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded font-bold text-zinc-500">
+              <span>All categories</span>
+              <span
+                className={
+                  selectedCategory === "all" ? "text-white/70" : "text-ink-subtle"
+                }
+              >
                 {products.length}
               </span>
             </button>
 
-            {categories.map((cat) => {
+            {categories.map((category) => {
               const count = products.filter(
-                (p) => p.category?.slug === cat.slug,
+                (product) => product.category?.slug === category.slug,
               ).length;
+              const active = selectedCategory === category.slug;
               return (
                 <button
-                  key={cat.id}
-                  onClick={() => handleCategoryChange(cat.slug)}
-                  className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-xs font-medium transition-colors cursor-pointer ${
-                    selectedCategory === cat.slug
-                      ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-400"
-                      : "text-zinc-600 hover:bg-zinc-50 dark:text-zinc-400 dark:hover:bg-zinc-800/40"
+                  key={category.id}
+                  onClick={() => handleCategoryChange(category.slug)}
+                  className={`flex cursor-pointer items-center justify-between rounded-full px-4 py-2 text-left text-sm capitalize transition-colors ${
+                    active
+                      ? "bg-accent text-white"
+                      : "text-ink-muted hover:bg-surface-muted hover:text-ink"
                   }`}
                 >
-                  <span className="capitalize">{cat.name}</span>
-                  <span className="text-[9px] bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded font-bold text-zinc-500">
+                  <span className="truncate">{category.name}</span>
+                  <span className={active ? "text-white/70" : "text-ink-subtle"}>
                     {count}
                   </span>
                 </button>
@@ -157,47 +138,54 @@ export const ProductCatalog: React.FC = () => {
           </div>
         </div>
 
-        <div>
+        <div className="mt-8">
           <Select
+            id="sort"
+            label="Sort by"
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            label="Sort By"
-            icon={<ArrowUpDown className="h-4 w-4" />}
-            labelClassName="mb-2.5 text-[10px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500"
-            className="py-2 text-xs"
+            onChange={(event) => setSortBy(event.target.value)}
+            labelClassName="mb-3 text-xs font-semibold uppercase tracking-widest text-ink-subtle"
           >
-            <option value="name-asc">Name (A-Z)</option>
-            <option value="name-desc">Name (Z-A)</option>
-            <option value="price-asc">Price (Low to High)</option>
-            <option value="price-desc">Price (High to Low)</option>
+            <option value="name-asc">Name (A–Z)</option>
+            <option value="name-desc">Name (Z–A)</option>
+            <option value="price-asc">Price (low to high)</option>
+            <option value="price-desc">Price (high to low)</option>
           </Select>
         </div>
       </aside>
 
-      <div className="flex-1 w-full">
-        {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-            {[...Array(6)].map((_, i) => (
-              <SkeletonCard key={i} />
+      <div className="w-full flex-1">
+        {loading && filteredProducts.length === 0 ? (
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <SkeletonCard key={index} />
             ))}
           </div>
         ) : filteredProducts.length === 0 ? (
-          <EmptyState
-            icon={Sparkles}
-            title="No products found"
-            description="We couldn't find any products matching your active filters. Try searching for something else or clearing the filters."
-            actionLabel="Reset Filters"
-            onActionClick={() => {
-              setSearchQuery("");
-              handleCategoryChange("all");
-            }}
-          />
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-            {filteredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+          <div className="rounded-2xl border border-dashed border-line-strong">
+            <EmptyState
+              icon={Sparkles}
+              title="Nothing matched"
+              description="No products fit the current filters. Try a different search or reset them."
+              actionLabel="Reset filters"
+              onActionClick={() => {
+                setSearchQuery("");
+                handleCategoryChange("all");
+              }}
+            />
           </div>
+        ) : (
+          <>
+            <p className="mb-5 text-sm text-ink-subtle">
+              Showing {filteredProducts.length}{" "}
+              {filteredProducts.length === 1 ? "product" : "products"}
+            </p>
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+              {filteredProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          </>
         )}
       </div>
     </div>

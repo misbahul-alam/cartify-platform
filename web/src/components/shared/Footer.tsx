@@ -1,124 +1,154 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
-import { ShoppingBag } from "lucide-react";
+import { ArrowUp, Mail } from "lucide-react";
+import { useCategoriesStore } from "@/store/useCategoriesStore";
+
+const accountLinks = [
+  { label: "Your orders", href: "/orders" },
+  { label: "Your cart", href: "/cart" },
+  { label: "Sign in", href: "/signin" },
+  { label: "Create account", href: "/signup" },
+];
+
+const paymentMethods = ["Visa", "Mastercard", "Amex", "Stripe"];
 
 export const Footer: React.FC = () => {
+  const categories = useCategoriesStore((state) => state.categories);
+
+  const publicCategories = categories
+    .filter((category) => category.status === "public")
+    .slice(0, 4);
+
+  const shopLinks = [
+    { label: "All products", href: "/products" },
+    { label: "Featured picks", href: "/#featured" },
+    { label: "New arrivals", href: "/products" },
+    ...publicCategories.map((category) => ({
+      label: category.name,
+      href: `/products?category=${category.slug}`,
+    })),
+  ];
+
   return (
-    <footer className="w-full border-t border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950 mt-auto">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div className="flex flex-col gap-4">
-            <Link
-              href="/"
-              className="flex items-center gap-2 text-xl font-bold text-indigo-600 dark:text-indigo-400"
-            >
-              <ShoppingBag className="h-6 w-6" />
-              <span>Cartify</span>
+    <footer className="mt-auto bg-ink text-canvas">
+      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="grid gap-12 lg:grid-cols-12">
+          <div className="lg:col-span-4">
+            <Link href="/" className="flex items-baseline gap-1.5">
+              <span className="font-display text-3xl font-semibold tracking-tight">
+                Cartify
+              </span>
+              <span className="h-1.5 w-1.5 rounded-full bg-accent-soft" />
             </Link>
-            <p className="text-sm text-zinc-500 dark:text-zinc-400 max-w-xs">
-              Cartify is a modern, high-performance e-commerce platform built
-              for developers, by developers. Experience blazing fast checkout
-              and catalog navigation.
+            <p className="mt-5 max-w-sm text-sm leading-6 text-canvas/60">
+              A small, carefully edited collection of goods — paired with a
+              checkout that gets out of the way.
             </p>
+            <Link
+              href="/products"
+              className="mt-7 inline-flex h-11 items-center rounded-full bg-canvas px-6 text-sm font-medium text-ink transition-opacity hover:opacity-90"
+            >
+              Browse the collection
+            </Link>
           </div>
 
-          <div>
-            <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 tracking-wider uppercase mb-4">
+          <div className="lg:col-span-3">
+            <h3 className="text-xs font-semibold uppercase tracking-widest text-canvas/40">
               Shop
             </h3>
-            <ul className="space-y-3">
-              <li>
-                <Link
-                  href="/products"
-                  className="text-sm text-zinc-600 hover:text-indigo-600 dark:text-zinc-400 dark:hover:text-indigo-400 transition-colors"
-                >
-                  All Products
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/products?category=electronics"
-                  className="text-sm text-zinc-600 hover:text-indigo-600 dark:text-zinc-400 dark:hover:text-indigo-400 transition-colors"
-                >
-                  Electronics
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/products?category=clothing"
-                  className="text-sm text-zinc-600 hover:text-indigo-600 dark:text-zinc-400 dark:hover:text-indigo-400 transition-colors"
-                >
-                  Clothing
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/products?category=books"
-                  className="text-sm text-zinc-600 hover:text-indigo-600 dark:text-zinc-400 dark:hover:text-indigo-400 transition-colors"
-                >
-                  Books
-                </Link>
-              </li>
+            <ul className="mt-5 space-y-3">
+              {shopLinks.map((link) => (
+                <li key={link.label}>
+                  <Link
+                    href={link.href}
+                    className="text-sm capitalize text-canvas/70 transition-colors hover:text-canvas"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          <div>
-            <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 tracking-wider uppercase mb-4">
-              Support
+          <div className="lg:col-span-2">
+            <h3 className="text-xs font-semibold uppercase tracking-widest text-canvas/40">
+              Account
             </h3>
-            <ul className="space-y-3">
-              <li>
-                <span className="text-sm text-zinc-600 dark:text-zinc-400 cursor-not-allowed">
-                  FAQ
-                </span>
-              </li>
-              <li>
-                <span className="text-sm text-zinc-600 dark:text-zinc-400 cursor-not-allowed">
-                  Shipping Policy
-                </span>
-              </li>
-              <li>
-                <span className="text-sm text-zinc-600 dark:text-zinc-400 cursor-not-allowed">
-                  Returns
-                </span>
-              </li>
-              <li>
-                <span className="text-sm text-zinc-600 dark:text-zinc-400 cursor-not-allowed">
-                  Contact Us
-                </span>
-              </li>
+            <ul className="mt-5 space-y-3">
+              {accountLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-sm text-canvas/70 transition-colors hover:text-canvas"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          <div>
-            <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 tracking-wider uppercase mb-4">
-              Technology
+          <div className="lg:col-span-3">
+            <h3 className="text-xs font-semibold uppercase tracking-widest text-canvas/40">
+              Contact
             </h3>
-            <p className="text-sm text-zinc-500 dark:text-zinc-400">
-              Built with Next.js, TypeScript, and Tailwind CSS. Powered by a
-              modern API architecture for seamless performance and scalability.
+            <a
+              href="mailto:hello@cartify.dev"
+              className="mt-5 inline-flex items-center gap-2 text-sm text-canvas/70 transition-colors hover:text-canvas"
+            >
+              <Mail className="h-4 w-4" />
+              hello@cartify.dev
+            </a>
+            <p className="mt-4 max-w-xs text-sm leading-6 text-canvas/50">
+              Questions about an order or a product? We reply within one
+              business day.
             </p>
           </div>
         </div>
 
-        <div className="border-t border-zinc-200 dark:border-zinc-800 mt-8 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-zinc-500 dark:text-zinc-400">
-            &copy; {new Date().getFullYear()} Cartify Platform. All rights
-            reserved.
+        <div className="mt-14 flex flex-col gap-6 border-t border-canvas/10 pt-8 lg:flex-row lg:items-center lg:justify-between">
+          <p className="text-xs text-canvas/50">
+            © {new Date().getFullYear()} Cartify. All rights reserved.
           </p>
-          <p className="text-xs text-zinc-400 dark:text-zinc-500">
-            Built with ❤️ by the Cartify Team. |{" "}
-            <a
-              href="https://misbahulala.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:underline"
+
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-xs text-canvas/40">Secure payments</span>
+            {paymentMethods.map((method) => (
+              <span
+                key={method}
+                className="rounded-md border border-canvas/15 px-2.5 py-1 text-[10px] font-medium uppercase tracking-wider text-canvas/60"
+              >
+                {method}
+              </span>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-4">
+            <p className="text-xs text-canvas/50">
+              Crafted by{" "}
+              <a
+                href="https://misbahulala.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-canvas/70 transition-colors hover:text-canvas"
+              >
+                Misbahul Alam
+              </a>
+            </p>
+            <button
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              aria-label="Back to top"
+              className="inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-canvas/15 text-canvas/70 transition-colors hover:border-canvas/40 hover:text-canvas"
             >
-              Misbahul Alam
-            </a>
-          </p>
+              <ArrowUp className="h-4 w-4" />
+            </button>
+          </div>
         </div>
       </div>
     </footer>
   );
 };
+
+export default Footer;

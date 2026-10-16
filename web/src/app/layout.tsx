@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Fraunces, Inter } from "next/font/google";
 import "./globals.css";
 import { ClientHydrator, Footer, Header } from "@/components/shared";
 
@@ -7,9 +7,17 @@ const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
 });
+
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
+  subsets: ["latin"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
-  title: "Cartify E-Commerce",
-  description: "Experience premium, modern shopping on Cartify",
+  title: "Cartify — Considered Goods",
+  description:
+    "A warm, editorial storefront for considered goods, with a checkout built to disappear.",
 };
 
 export default function RootLayout({
@@ -20,12 +28,12 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${inter.className} h-full antialiased`}
+      className={`${inter.variable} ${fraunces.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50">
+      <body className="flex min-h-full flex-col bg-canvas text-ink">
         <ClientHydrator />
         <Header />
-        <main className="flex-1 flex flex-col w-full">{children}</main>
+        <main className="flex flex-1 flex-col">{children}</main>
         <Footer />
       </body>
     </html>

@@ -2,37 +2,39 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-
-import { CheckCircle, AlertCircle, ArrowRight } from "lucide-react";
-import { useCartStore } from "@/store/useCartStore";
-import type { Order } from "@/types";
-import { useOrdersStore } from "@/store/useOrdersStore";
+import { AlertCircle, ArrowRight, CheckCircle2 } from "lucide-react";
 import { Elements } from "@stripe/react-stripe-js";
+import { useCartStore } from "@/store/useCartStore";
+import { useOrdersStore } from "@/store/useOrdersStore";
+import type { Order } from "@/types";
 import { stripePromise } from "@/lib/stripe";
 import { Breadcrumb, Button } from "@/components/ui";
+import { getErrorMessage } from "@/lib/errors";
 import ShippingDetails from "./ShippingDetails";
 import SummaryDetails from "./SummaryDetails";
 import PaymentForm from "./PaymentForm";
-import { getErrorMessage } from "@/lib/errors";
 
 export const CheckoutContainer: React.FC = () => {
-  const { items, totalPrice, clearCart } = useCartStore();
+  const items = useCartStore((state) => state.items);
+  const totalPrice = useCartStore((state) => state.totalPrice);
+  const clearCart = useCartStore((state) => state.clearCart);
+  const createOrder = useOrdersStore((state) => state.createOrder);
+  const createPaymentIntent = useOrdersStore(
+    (state) => state.createPaymentIntent,
+  );
 
   const [shippingAddress, setShippingAddress] = useState("");
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successOrder, setSuccessOrder] = useState<Order | null>(null);
   const [paymentMsg, setPaymentMsg] = useState<string | null>(null);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
-  const createOrder = useOrdersStore((s) => s.createOrder);
-  const createPaymentIntent = useOrdersStore((s) => s.createPaymentIntent);
 
   const shippingCost = totalPrice >= 100 ? 0 : 9.99;
   const finalTotal = totalPrice + shippingCost;
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
     setError(null);
     setLoading(true);
 
@@ -49,27 +51,26 @@ export const CheckoutContainer: React.FC = () => {
           provider: "stripe",
         });
 
-        if (paymentData && paymentData.client_secret) {
+        if (paymentData?.client_secret) {
           setClientSecret(paymentData.client_secret);
           return;
         }
 
         if (paymentData) {
-          setPaymentMsg("Payment authorized successfully via Stripe.");
+          setPaymentMsg("Payment authorised successfully.");
         }
-      } catch (payErr: unknown) {
-        console.warn(
-          "Stripe intent failed (probably invalid secret keys):",
-          payErr,
-        );
+      } catch (paymentError: unknown) {
+        console.warn("Payment intent unavailable", paymentError);
         setPaymentMsg(
-          "Order saved. Stripe payment intent skipped (using mock payment gateway).",
+          "Order saved. Card payment was skipped and the mock gateway was used.",
         );
       }
 
       await clearCart();
-    } catch (error: unknown) {
-      setError(getErrorMessage(error, "Something went wrong during checkout."));
+    } catch (submitError: unknown) {
+      setError(
+        getErrorMessage(submitError, "Something went wrong during checkout."),
+      );
     } finally {
       setLoading(false);
     }
@@ -77,58 +78,61 @@ export const CheckoutContainer: React.FC = () => {
 
   if (successOrder) {
     return (
-      <div className="mx-auto max-w-lg w-full px-4 py-24 sm:px-6 lg:px-8 text-center bg-zinc-50 dark:bg-zinc-950">
-        <div className="w-full space-y-8 rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
-          <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-green-50 text-green-600 dark:bg-green-950/40 dark:text-green-400 mb-4">
-            <CheckCircle className="h-10 w-10" />
+      <div className="mx-auto w-full max-w-lg px-4 py-20 sm:px-6 lg:px-8">
+        <div className="flex flex-col items-center rounded-[2rem] border border-line bg-surface p-8 text-center shadow-xl shadow-black/5 sm:p-10">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-accent-soft text-accent">
+            <CheckCircle2 className="h-8 w-8" />
           </div>
-          <h2 className="text-2xl font-extrabold text-zinc-900 dark:text-zinc-50">
-            Order Placed Successfully!
-          </h2>
-          <p className="text-sm text-zinc-500 mt-2">
-            Thank you for your purchase. Your order ID is:{" "}
-            <code className="bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded text-xs font-mono font-bold">
+          <h1 className="mt-6 font-display text-3xl font-semibold tracking-tight text-ink">
+            Order confirmed
+          </h1>
+          <p className="mt-3 text-sm leading-6 text-ink-muted">
+            Thank you for your purchase. Your order reference is{" "}
+            <span className="font-mono text-xs font-medium text-ink">
               {successOrder.id}
-            </code>
+            </span>
+            .
           </p>
 
           {paymentMsg && (
-            <div className="bg-indigo-50/50 p-4 rounded-xl border border-indigo-100/50 text-xs text-indigo-700 text-left dark:bg-indigo-950/20 dark:border-indigo-950/30 dark:text-indigo-400">
-              <p className="font-semibold mb-1">Payment Status:</p>
-              <p>{paymentMsg}</p>
+            <div className="mt-6 w-full rounded-2xl bg-surface-muted p-4 text-left">
+              <p className="text-xs font-semibold uppercase tracking-widest text-ink-subtle">
+                Payment status
+              </p>
+              <p className="mt-1.5 text-sm text-ink-muted">{paymentMsg}</p>
             </div>
           )}
 
           {clientSecret && (
-            <div className="mt-6 max-w-md mx-auto w-full">
+            <div className="mt-6 w-full">
               <Elements stripe={stripePromise} options={{ clientSecret }}>
                 <PaymentForm
                   clientSecret={clientSecret}
                   amount={finalTotal}
                   currency="USD"
-                  onSuccess={async (msg: string) => {
-                    setPaymentMsg(msg);
+                  onSuccess={async (message: string) => {
+                    setPaymentMsg(message);
                     await clearCart();
                   }}
-                  onError={(errMsg: string) => setError(errMsg)}
+                  onError={(message: string) => setError(message)}
                 />
               </Elements>
             </div>
           )}
 
-          <div className="pt-6 flex flex-col gap-3">
+          <div className="mt-8 flex w-full flex-col gap-3">
             <Link
               href="/orders"
-              className="flex h-12 items-center justify-center gap-2 rounded-xl bg-indigo-600 text-white font-semibold shadow transition-premium hover:bg-indigo-500 cursor-pointer"
+              className="flex h-12 items-center justify-center gap-2 rounded-full bg-accent text-sm font-medium text-white transition-colors hover:bg-accent-strong"
             >
-              View Order History
-              <ArrowRight className="h-4.5 w-4.5" />
+              View your orders
+              <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
               href="/products"
-              className="text-sm text-indigo-600 hover:text-indigo-500 font-semibold cursor-pointer"
+              className="text-sm font-medium text-ink-muted transition-colors hover:text-accent"
             >
-              Continue Shopping
+              Continue shopping
             </Link>
           </div>
         </div>
@@ -137,7 +141,7 @@ export const CheckoutContainer: React.FC = () => {
   }
 
   return (
-    <div className="mx-auto max-w-7xl w-full px-4 py-12 sm:px-6 lg:px-8 bg-zinc-50 dark:bg-zinc-950">
+    <div className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
       <Breadcrumb
         items={[
           { label: "Home", href: "/" },
@@ -146,29 +150,34 @@ export const CheckoutContainer: React.FC = () => {
         ]}
       />
 
-      <h1 className="text-3xl font-extrabold text-zinc-900 dark:text-zinc-50 tracking-tight mb-10">
-        Checkout
-      </h1>
+      <div className="mb-10">
+        <h1 className="font-display text-4xl font-semibold tracking-tight text-ink">
+          Checkout
+        </h1>
+        <p className="mt-2 text-sm text-ink-muted">
+          One last step and your order is on its way.
+        </p>
+      </div>
 
       {error && (
-        <div className="flex items-center gap-2 rounded-lg bg-red-50 p-4 text-sm text-red-700 dark:bg-red-950/20 dark:text-red-400 mb-6">
-          <AlertCircle className="h-5 w-5 shrink-0" />
+        <div className="mb-6 flex items-start gap-2.5 rounded-xl border border-danger/20 bg-danger-soft p-4 text-sm text-danger">
+          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       <form
         onSubmit={handleSubmit}
-        className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start"
+        className="grid grid-cols-1 items-start gap-8 lg:grid-cols-3"
       >
-        <div className="lg:col-span-2 space-y-6">
+        <div className="space-y-6 lg:col-span-2">
           <ShippingDetails
             shippingAddress={shippingAddress}
             setShippingAddress={setShippingAddress}
           />
         </div>
 
-        <div className="border border-zinc-200/80 rounded-2xl bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900 shadow-xs">
+        <div className="rounded-2xl border border-line bg-surface p-6 lg:sticky lg:top-32">
           <SummaryDetails
             items={items}
             totalPrice={totalPrice}
@@ -181,9 +190,9 @@ export const CheckoutContainer: React.FC = () => {
             disabled={loading}
             fullWidth
             size="lg"
-            className="mt-8"
+            className="mt-7"
           >
-            {loading ? "Processing Order..." : "Authorize & Place Order"}
+            {loading ? "Placing order…" : "Place order"}
           </Button>
         </div>
       </form>

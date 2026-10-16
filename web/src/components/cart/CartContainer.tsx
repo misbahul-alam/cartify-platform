@@ -3,13 +3,13 @@
 import React from "react";
 import Link from "next/link";
 import {
-  Trash2,
-  Minus,
-  Plus,
-  ShoppingBag,
   ArrowRight,
   Info,
+  Minus,
+  Plus,
   ShieldCheck,
+  ShoppingBag,
+  Trash2,
 } from "lucide-react";
 import {
   Breadcrumb,
@@ -20,29 +20,33 @@ import {
 import { useAuthStore } from "@/store/useAuthStore";
 import { useCartStore } from "@/store/useCartStore";
 
+const FALLBACK_IMAGE =
+  "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=800";
+
+const formatPrice = (value: number) =>
+  value.toLocaleString("en-US", { minimumFractionDigits: 2 });
+
 export const CartContainer: React.FC = () => {
   const user = useAuthStore((state) => state.user);
-  const {
-    items,
-    totalPrice,
-    totalItems,
-    updateQuantity,
-    removeItem,
-    clearCart,
-    loading,
-  } = useCartStore();
+  const items = useCartStore((state) => state.items);
+  const totalPrice = useCartStore((state) => state.totalPrice);
+  const totalItems = useCartStore((state) => state.totalItems);
+  const updateQuantity = useCartStore((state) => state.updateQuantity);
+  const removeItem = useCartStore((state) => state.removeItem);
+  const clearCart = useCartStore((state) => state.clearCart);
+  const loading = useCartStore((state) => state.loading);
 
   const shippingCost = totalPrice >= 100 || totalPrice === 0 ? 0 : 9.99;
   const finalTotal = totalPrice + shippingCost;
 
   if (loading) {
     return (
-      <div className="mx-auto max-w-7xl w-full px-4 py-16 sm:px-6 lg:px-8">
-        <SkeletonBlock className="h-10 w-1/4 mb-8" />
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-4">
-            {[...Array(3)].map((_, i) => (
-              <SkeletonRow key={i} />
+      <div className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <SkeletonBlock className="mb-8 h-10 w-1/4" />
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+          <div className="space-y-4 lg:col-span-2">
+            {Array.from({ length: 3 }).map((_, index) => (
+              <SkeletonRow key={index} />
             ))}
           </div>
           <SkeletonRow className="h-64" />
@@ -55,197 +59,185 @@ export const CartContainer: React.FC = () => {
     return (
       <EmptyState
         icon={ShoppingBag}
-        title="Your shopping cart is empty"
-        description="Looks like you haven't added anything to your cart yet."
-        actionLabel="Explore Catalog"
+        title="Your cart is empty"
+        description="Items you add will gather here, ready for a quick checkout."
+        actionLabel="Explore the collection"
         actionHref="/products"
       />
     );
   }
 
   return (
-    <div className="mx-auto max-w-7xl w-full px-4 py-12 sm:px-6 lg:px-8 bg-zinc-50 dark:bg-zinc-950">
-      <Breadcrumb
-        items={[{ label: "Home", href: "/" }, { label: "Shopping Cart" }]}
-      />
+    <div className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Cart" }]} />
 
-      <div className="flex items-center justify-between mb-10">
-        <h1 className="text-3xl font-extrabold text-zinc-900 dark:text-zinc-50 tracking-tight">
-          Shopping Cart ({totalItems})
-        </h1>
+      <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 className="font-display text-4xl font-semibold tracking-tight text-ink">
+            Your cart
+          </h1>
+          <p className="mt-2 text-sm text-ink-muted">
+            {totalItems} item{totalItems === 1 ? "" : "s"} ready to check out.
+          </p>
+        </div>
         <button
           onClick={clearCart}
-          className="text-xs font-semibold text-red-600 hover:text-red-500 transition-colors cursor-pointer"
+          className="cursor-pointer text-sm font-medium text-ink-muted transition-colors hover:text-danger"
         >
-          Clear All Items
+          Clear cart
         </button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-        <div className="lg:col-span-2 space-y-4">
+      <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-3">
+        <div className="space-y-3 lg:col-span-2">
           {items.map((item) => (
             <div
               key={item.product.id}
-              className="flex items-center gap-4 p-4 rounded-2xl border border-zinc-200/60 bg-white dark:border-zinc-800 dark:bg-zinc-900 shadow-xs"
+              className="flex items-center gap-4 rounded-2xl border border-line bg-surface p-4"
             >
-              <div className="h-20 w-20 shrink-0 rounded-xl bg-zinc-100 dark:bg-zinc-950 overflow-hidden">
+              <Link
+                href={`/products/${item.product.slug}`}
+                className="h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-surface-muted"
+              >
                 <img
-                  src={
-                    item.product.images?.[0]?.url ||
-                    "https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&q=80&w=600"
-                  }
+                  src={item.product.images?.[0]?.url || FALLBACK_IMAGE}
                   alt={item.product.name}
                   className="h-full w-full object-cover object-center"
                 />
-              </div>
+              </Link>
 
-              <div className="flex-1 min-w-0">
-                <Link href={`/products/${item.product.slug}`} className="block">
-                  <h3 className="text-sm sm:text-base font-semibold text-zinc-900 dark:text-zinc-50 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors truncate">
+              <div className="min-w-0 flex-1">
+                <Link href={`/products/${item.product.slug}`}>
+                  <h3 className="truncate font-display text-lg font-semibold text-ink transition-colors hover:text-accent">
                     {item.product.name}
                   </h3>
                 </Link>
-                <p className="text-xs text-zinc-400 capitalize mt-0.5">
+                <p className="mt-0.5 text-xs capitalize text-ink-subtle">
                   {item.product.category?.name || "Product"}
                 </p>
-                <p className="text-xs text-zinc-950 dark:text-zinc-50 font-bold mt-1">
-                  $
-                  {item.product.price.toLocaleString("en-US", {
-                    minimumFractionDigits: 2,
-                  })}
+                <p className="mt-1 text-sm font-semibold text-ink">
+                  ${formatPrice(item.product.price)}
                 </p>
               </div>
 
-              <div className="flex items-center rounded-lg border border-zinc-200 bg-white p-0.5 dark:border-zinc-800 dark:bg-zinc-950">
+              <div className="flex items-center rounded-full border border-line p-0.5">
                 <button
                   onClick={() =>
                     updateQuantity(item.product.id, item.quantity - 1)
                   }
-                  className="flex h-8 w-8 items-center justify-center rounded hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-500 transition-colors cursor-pointer"
+                  aria-label="Decrease quantity"
+                  className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-surface-muted hover:text-ink"
                 >
                   <Minus className="h-3.5 w-3.5" />
                 </button>
-                <span className="w-8 text-center text-xs font-bold text-zinc-900 dark:text-zinc-50">
+                <span className="w-8 text-center text-sm font-semibold text-ink">
                   {item.quantity}
                 </span>
                 <button
                   onClick={() =>
                     updateQuantity(item.product.id, item.quantity + 1)
                   }
-                  className="flex h-8 w-8 items-center justify-center rounded hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-500 transition-colors cursor-pointer"
+                  aria-label="Increase quantity"
+                  className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-surface-muted hover:text-ink"
                 >
                   <Plus className="h-3.5 w-3.5" />
                 </button>
               </div>
 
-              <div className="text-right min-w-[70px]">
-                <p className="text-sm font-bold text-zinc-900 dark:text-zinc-50">
-                  $
-                  {item.subtotal.toLocaleString("en-US", {
-                    minimumFractionDigits: 2,
-                  })}
+              <div className="hidden w-20 text-right sm:block">
+                <p className="text-sm font-semibold text-ink">
+                  ${formatPrice(item.subtotal)}
                 </p>
               </div>
 
               <button
                 onClick={() => removeItem(item.product.id)}
-                className="p-2 text-zinc-400 hover:text-red-500 transition-colors cursor-pointer"
+                aria-label="Remove item"
+                className="cursor-pointer p-2 text-ink-subtle transition-colors hover:text-danger"
               >
-                <Trash2 className="h-4.5 w-4.5" />
+                <Trash2 className="h-4 w-4" />
               </button>
             </div>
           ))}
         </div>
 
-        <div className="space-y-6">
-          <div className="border border-zinc-200/80 rounded-2xl bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900 shadow-xs">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-50 mb-6 pb-4 border-b border-zinc-100 dark:border-zinc-800">
-              Order Summary
+        <div className="space-y-4 lg:sticky lg:top-32">
+          <div className="rounded-2xl border border-line bg-surface p-6">
+            <h2 className="font-display text-xl font-semibold text-ink">
+              Order summary
             </h2>
 
-            <div className="space-y-4">
-              <div className="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400">
-                <span>Subtotal ({totalItems} items)</span>
-                <span className="font-bold text-zinc-950 dark:text-zinc-50">
-                  $
-                  {totalPrice.toLocaleString("en-US", {
-                    minimumFractionDigits: 2,
-                  })}
+            <div className="mt-5 space-y-3.5">
+              <div className="flex items-center justify-between text-sm text-ink-muted">
+                <span>Subtotal</span>
+                <span className="font-medium text-ink">
+                  ${formatPrice(totalPrice)}
                 </span>
               </div>
-              <div className="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400">
+              <div className="flex items-center justify-between text-sm text-ink-muted">
                 <span>Shipping</span>
                 {shippingCost === 0 ? (
-                  <span className="font-bold text-green-600 dark:text-green-400 uppercase text-[9px] tracking-wider">
+                  <span className="text-xs font-semibold uppercase tracking-wide text-success">
                     Free
                   </span>
                 ) : (
-                  <span className="font-bold text-zinc-950 dark:text-zinc-50">
-                    $
-                    {shippingCost.toLocaleString("en-US", {
-                      minimumFractionDigits: 2,
-                    })}
+                  <span className="font-medium text-ink">
+                    ${formatPrice(shippingCost)}
                   </span>
                 )}
               </div>
 
               {shippingCost > 0 && (
-                <div className="flex items-start gap-2 bg-indigo-50/50 p-3 rounded-xl border border-indigo-100/50 text-[10px] text-indigo-700 dark:bg-indigo-950/20 dark:border-indigo-950/30 dark:text-indigo-400">
-                  <Info className="h-4.5 w-4.5 shrink-0 text-indigo-600" />
+                <div className="flex items-start gap-2.5 rounded-xl bg-accent-soft p-3.5 text-xs leading-5 text-accent-strong">
+                  <Info className="mt-0.5 h-4 w-4 shrink-0" />
                   <span>
                     Add{" "}
-                    <span className="font-bold">
+                    <span className="font-semibold">
                       ${(100 - totalPrice).toFixed(2)}
                     </span>{" "}
-                    more to qualify for Free Shipping!
+                    more for free shipping.
                   </span>
                 </div>
               )}
 
-              <div className="border-t border-zinc-100 dark:border-zinc-800 pt-4 flex items-center justify-between">
-                <span className="text-xs font-bold text-zinc-900 dark:text-zinc-50">
-                  Total Amount
-                </span>
-                <span className="text-xl font-extrabold text-zinc-950 dark:text-zinc-50">
-                  $
-                  {finalTotal.toLocaleString("en-US", {
-                    minimumFractionDigits: 2,
-                  })}
+              <div className="flex items-center justify-between border-t border-line pt-4">
+                <span className="text-sm font-semibold text-ink">Total</span>
+                <span className="font-display text-2xl font-semibold text-ink">
+                  ${formatPrice(finalTotal)}
                 </span>
               </div>
             </div>
 
-            <div className="mt-8">
+            <div className="mt-7">
               {user ? (
                 <Link
                   href="/checkout"
-                  className="flex w-full h-12 items-center justify-center gap-2 rounded-xl bg-indigo-600 text-white font-semibold shadow transition-premium hover:bg-indigo-500 cursor-pointer"
+                  className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-accent text-sm font-medium text-white transition-colors hover:bg-accent-strong"
                 >
-                  Proceed to Checkout
-                  <ArrowRight className="h-4.5 w-4.5" />
+                  Proceed to checkout
+                  <ArrowRight className="h-4 w-4" />
                 </Link>
               ) : (
                 <div className="space-y-3">
                   <Link
                     href="/signin?redirect=/checkout"
-                    className="flex w-full h-12 items-center justify-center gap-2 rounded-xl bg-indigo-600 text-white font-semibold shadow transition-premium hover:bg-indigo-500 cursor-pointer"
+                    className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-accent text-sm font-medium text-white transition-colors hover:bg-accent-strong"
                   >
-                    Login to Checkout
-                    <ArrowRight className="h-4.5 w-4.5" />
+                    Sign in to checkout
+                    <ArrowRight className="h-4 w-4" />
                   </Link>
-                  <p className="text-center text-[10px] text-zinc-400">
-                    Signing in lets you complete your purchase safely.
+                  <p className="text-center text-xs text-ink-subtle">
+                    Signing in keeps your order attached to your account.
                   </p>
                 </div>
               )}
             </div>
           </div>
 
-          <div className="flex items-center gap-3 p-4 rounded-xl border border-zinc-200/55 text-xs text-zinc-500 dark:border-zinc-800/55 dark:text-zinc-400">
-            <ShieldCheck className="h-5 w-5 text-indigo-600 shrink-0" />
+          <div className="flex items-start gap-3 rounded-2xl border border-line bg-surface p-4 text-xs leading-5 text-ink-muted">
+            <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-accent" />
             <span>
-              We secure your transactions with industry-standard SSL encryption
-              and Stripe integration.
+              Payments are processed over an encrypted connection with Stripe.
             </span>
           </div>
         </div>

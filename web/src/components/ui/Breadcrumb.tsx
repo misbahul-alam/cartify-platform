@@ -16,20 +16,20 @@ export const Breadcrumb: React.FC<Props> = ({ items, className = "mb-8" }) => {
   return (
     <nav
       aria-label="Breadcrumb"
-      className={`flex items-center gap-1.5 text-xs font-medium text-zinc-500 ${className}`}
+      className={`flex flex-wrap items-center gap-1.5 text-xs tracking-wide text-ink-subtle ${className}`}
     >
       {items.map((item, index) => (
         <React.Fragment key={index}>
-          {index > 0 && <ChevronRight className="h-3 w-3" />}
+          {index > 0 && <ChevronRight className="h-3 w-3 shrink-0" />}
           {item.href ? (
             <Link
               href={item.href}
-              className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors capitalize"
+              className="capitalize transition-colors hover:text-accent"
             >
               {item.label}
             </Link>
           ) : (
-            <span className="text-zinc-900 dark:text-zinc-100 font-semibold truncate max-w-50">
+            <span className="truncate font-medium capitalize text-ink">
               {item.label}
             </span>
           )}
