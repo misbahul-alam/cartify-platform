@@ -6,6 +6,7 @@ import { ClientHydrator, Footer, Header } from "@/components/shared";
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const fraunces = Fraunces({

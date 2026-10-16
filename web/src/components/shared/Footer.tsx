@@ -12,8 +12,6 @@ const accountLinks = [
   { label: "Create account", href: "/signup" },
 ];
 
-const paymentMethods = ["Visa", "Mastercard", "Amex", "Stripe"];
-
 export const Footer: React.FC = () => {
   const categories = useCategoriesStore((state) => state.categories);
 
@@ -112,18 +110,6 @@ export const Footer: React.FC = () => {
           <p className="text-xs text-canvas/50">
             © {new Date().getFullYear()} Cartify. All rights reserved.
           </p>
-
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs text-canvas/40">Secure payments</span>
-            {paymentMethods.map((method) => (
-              <span
-                key={method}
-                className="rounded-md border border-canvas/15 px-2.5 py-1 text-[10px] font-medium uppercase tracking-wider text-canvas/60"
-              >
-                {method}
-              </span>
-            ))}
-          </div>
 
           <div className="flex items-center gap-4">
             <p className="text-xs text-canvas/50">

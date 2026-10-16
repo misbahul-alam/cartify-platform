@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import type { Product } from "@/types";
 import { Check, Plus } from "lucide-react";
@@ -36,11 +37,12 @@ export const ProductCard: React.FC<Props> = ({ product }) => {
           href={`/products/${product.slug}`}
           className="absolute inset-0 block"
         >
-          <img
+          <Image
             src={image}
             alt={product.name}
-            loading="lazy"
-            className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-[1.05]"
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+            className="object-cover object-center transition-transform duration-500 group-hover:scale-[1.05]"
           />
         </Link>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, Star } from "lucide-react";
 import { useProductsStore } from "@/store/useProductsStore";
@@ -98,19 +99,25 @@ export const HeroSection: React.FC = () => {
           />
 
           <div className="absolute -right-6 top-1/2 hidden h-32 w-32 -translate-y-1/2 overflow-hidden rounded-[1.75rem] border border-line bg-surface shadow-2xl shadow-black/10 sm:block">
-            <img
+            <Image
               src={secondaryImage}
               alt=""
               aria-hidden="true"
-              className="h-full w-full object-cover object-center"
+              fill
+              sizes="128px"
+              className="object-cover object-center"
             />
           </div>
 
           <div className="relative aspect-square w-full overflow-hidden rounded-[2.5rem] border border-line bg-surface-muted shadow-2xl shadow-black/10">
-            <img
+            <Image
               src={spotlightImage}
               alt={spotlight?.name || "Featured product"}
-              className="h-full w-full object-cover object-center"
+              fill
+              loading="eager"
+              fetchPriority="high"
+              sizes="(max-width: 1024px) 100vw, 448px"
+              className="object-cover object-center"
             />
             <span className="absolute left-5 top-5 inline-flex items-center gap-1.5 rounded-full bg-canvas/90 px-3.5 py-1.5 text-xs font-medium text-ink backdrop-blur">
               <Star className="h-3.5 w-3.5 fill-amber-500 text-amber-500" />

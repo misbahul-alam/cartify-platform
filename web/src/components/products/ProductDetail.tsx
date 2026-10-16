@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import {
   Breadcrumb,
   EmptyState,
@@ -101,11 +102,13 @@ export const ProductDetail: React.FC<Props> = ({ slug }) => {
 
       <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-16">
         <div className="space-y-4">
-          <div className="aspect-square w-full overflow-hidden rounded-[2rem] border border-line bg-surface-muted">
-            <img
+          <div className="relative aspect-square w-full overflow-hidden rounded-[2rem] border border-line bg-surface-muted">
+            <Image
               src={activeImage || FALLBACK_IMAGE}
               alt={product.name}
-              className="h-full w-full object-cover object-center"
+              fill
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-cover object-center"
             />
           </div>
 
@@ -121,10 +124,12 @@ export const ProductDetail: React.FC<Props> = ({ slug }) => {
                       : "border-line hover:border-line-strong"
                   }`}
                 >
-                  <img
+                  <Image
                     src={image.url}
                     alt={product.name}
-                    className="h-full w-full object-cover object-center"
+                    fill
+                    sizes="80px"
+                    className="object-cover object-center"
                   />
                 </button>
               ))}

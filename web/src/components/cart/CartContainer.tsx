@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -97,12 +98,14 @@ export const CartContainer: React.FC = () => {
             >
               <Link
                 href={`/products/${item.product.slug}`}
-                className="h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-surface-muted"
+                className="relative block h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-surface-muted"
               >
-                <img
+                <Image
                   src={item.product.images?.[0]?.url || FALLBACK_IMAGE}
                   alt={item.product.name}
-                  className="h-full w-full object-cover object-center"
+                  fill
+                  sizes="80px"
+                  className="object-cover object-center"
                 />
               </Link>
 

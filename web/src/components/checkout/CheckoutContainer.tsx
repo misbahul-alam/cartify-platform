@@ -1,18 +1,23 @@
 "use client";
 
 import React, { useState } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { AlertCircle, ArrowRight, CheckCircle2 } from "lucide-react";
-import { Elements } from "@stripe/react-stripe-js";
 import { useCartStore } from "@/store/useCartStore";
 import { useOrdersStore } from "@/store/useOrdersStore";
 import type { Order } from "@/types";
-import { stripePromise } from "@/lib/stripe";
 import { Breadcrumb, Button } from "@/components/ui";
 import { getErrorMessage } from "@/lib/errors";
 import ShippingDetails from "./ShippingDetails";
 import SummaryDetails from "./SummaryDetails";
-import PaymentForm from "./PaymentForm";
+
+const PaymentSection = dynamic(() => import("./PaymentSection"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-40 w-full animate-pulse rounded-2xl border border-line bg-surface-muted" />
+  ),
+});
 
 export const CheckoutContainer: React.FC = () => {
   const items = useCartStore((state) => state.items);
@@ -105,18 +110,16 @@ export const CheckoutContainer: React.FC = () => {
 
           {clientSecret && (
             <div className="mt-6 w-full">
-              <Elements stripe={stripePromise} options={{ clientSecret }}>
-                <PaymentForm
-                  clientSecret={clientSecret}
-                  amount={finalTotal}
-                  currency="USD"
-                  onSuccess={async (message: string) => {
-                    setPaymentMsg(message);
-                    await clearCart();
-                  }}
-                  onError={(message: string) => setError(message)}
-                />
-              </Elements>
+              <PaymentSection
+                clientSecret={clientSecret}
+                amount={finalTotal}
+                currency="USD"
+                onSuccess={async (message: string) => {
+                  setPaymentMsg(message);
+                  await clearCart();
+                }}
+                onError={(message: string) => setError(message)}
+              />
             </div>
           )}
 

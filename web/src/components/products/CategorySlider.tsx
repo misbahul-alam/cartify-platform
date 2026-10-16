@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, Compass } from "lucide-react";
 import { useCategoriesStore } from "@/store/useCategoriesStore";
@@ -64,11 +65,12 @@ export const CategorySlider: React.FC = () => {
             className="group w-64 shrink-0 snap-start"
           >
             <div className="relative aspect-square w-full overflow-hidden rounded-2xl border border-line bg-surface-muted">
-              <img
+              <Image
                 src={category.image_url || FALLBACK_IMAGE}
                 alt={category.name}
-                loading="lazy"
-                className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                fill
+                sizes="256px"
+                className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
               />
               <span className="absolute left-4 top-4 rounded-full bg-canvas/90 px-3 py-1 text-[11px] font-medium text-ink backdrop-blur">
                 {count} {count === 1 ? "item" : "items"}

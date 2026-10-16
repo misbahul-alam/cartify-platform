@@ -58,6 +58,8 @@
 html {
   -webkit-font-smoothing: antialiased;
   scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
 }
 
 body {
@@ -73,8 +75,8 @@ body {
 }
 
 ::-webkit-scrollbar {
-  width: 11px;
-  height: 11px;
+  width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
@@ -82,13 +84,18 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--line-strong);
-  border: 3px solid var(--canvas);
+  background-color: var(--line-strong);
+  background-clip: content-box;
+  border: 2px solid transparent;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--ink-subtle);
+  background-color: var(--ink-subtle);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
 }
 
 @keyframes cartify-rise {
