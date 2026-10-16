@@ -27,7 +27,7 @@ export const EmptyState: React.FC<Props> = ({
       <div className="flex h-16 w-16 items-center justify-center rounded-full bg-accent-soft text-accent">
         <Icon className="h-7 w-7" />
       </div>
-      <h3 className="mt-6 font-display text-2xl font-semibold tracking-tight text-ink">
+      <h3 className="mt-6 text-2xl font-semibold tracking-tight text-ink">
         {title}
       </h3>
       <p className="mt-2 max-w-sm text-sm leading-6 text-ink-muted">

@@ -77,7 +77,7 @@ export const CategorySlider: React.FC = () => {
               </span>
             </div>
             <div className="mt-4 flex items-center justify-between gap-3">
-              <h3 className="truncate font-display text-lg font-semibold text-ink transition-colors group-hover:text-accent">
+              <h3 className="truncate text-lg font-semibold text-ink transition-colors group-hover:text-accent">
                 {category.name}
               </h3>
               <ArrowUpRight className="h-5 w-5 shrink-0 text-ink-subtle transition-colors group-hover:text-accent" />

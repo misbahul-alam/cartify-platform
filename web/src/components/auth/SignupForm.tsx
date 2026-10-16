@@ -52,7 +52,7 @@ export function SignupForm() {
           <span className="h-1.5 w-1.5 rounded-full bg-accent" />
           Join Cartify
         </span>
-        <h1 className="mt-6 font-display text-3xl font-semibold tracking-tight text-ink">
+        <h1 className="mt-6 text-3xl font-semibold tracking-tight text-ink">
           Create your account
         </h1>
         <p className="mt-2 text-sm text-ink-muted">

@@ -88,12 +88,12 @@ export const CheckoutContainer: React.FC = () => {
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-accent-soft text-accent">
             <CheckCircle2 className="h-8 w-8" />
           </div>
-          <h1 className="mt-6 font-display text-3xl font-semibold tracking-tight text-ink">
+          <h1 className="mt-6 text-3xl font-semibold tracking-tight text-ink">
             Order confirmed
           </h1>
           <p className="mt-3 text-sm leading-6 text-ink-muted">
             Thank you for your purchase. Your order reference is{" "}
-            <span className="font-mono text-xs font-medium text-ink">
+            <span className="text-xs font-medium tabular-nums text-ink">
               {successOrder.id}
             </span>
             .
@@ -154,7 +154,7 @@ export const CheckoutContainer: React.FC = () => {
       />
 
       <div className="mb-10">
-        <h1 className="font-display text-4xl font-semibold tracking-tight text-ink">
+        <h1 className="text-4xl font-semibold tracking-tight text-ink">
           Checkout
         </h1>
         <p className="mt-2 text-sm text-ink-muted">

@@ -1,3 +1,4 @@
+import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/cn";
 import type { ReactNode, SelectHTMLAttributes } from "react";
 
@@ -40,7 +41,7 @@ export function Select({
         <select
           id={id}
           className={cn(
-            "w-full cursor-pointer appearance-none rounded-xl border border-line bg-surface px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-accent focus:ring-4 focus:ring-accent/10",
+            "w-full cursor-pointer appearance-none rounded-xl border border-line bg-surface py-3 pl-4 pr-10 text-sm text-ink outline-none transition-colors focus:border-accent focus:ring-4 focus:ring-accent/10",
             Boolean(icon) && "pl-11",
             className,
           )}
@@ -48,6 +49,7 @@ export function Select({
         >
           {children}
         </select>
+        <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-subtle" />
       </div>
     </div>
   );

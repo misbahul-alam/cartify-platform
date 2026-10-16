@@ -83,7 +83,7 @@ export default function HomePage() {
             <span className="text-xs font-semibold uppercase tracking-widest text-accent">
               Browse
             </span>
-            <h2 className="mt-3 font-display text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
+            <h2 className="mt-3 text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
               Shop by category
             </h2>
             <p className="mt-4 text-sm leading-6 text-ink-muted">
@@ -112,7 +112,7 @@ export default function HomePage() {
               <span className="text-xs font-semibold uppercase tracking-widest text-accent">
                 Featured
               </span>
-              <h2 className="mt-3 font-display text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
+              <h2 className="mt-3 text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
                 Editors&rsquo; picks
               </h2>
               <p className="mt-4 text-sm leading-6 text-ink-muted">
@@ -139,7 +139,7 @@ export default function HomePage() {
               <span className="text-xs font-semibold uppercase tracking-widest text-accent">
                 Just landed
               </span>
-              <h2 className="mt-3 font-display text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
+              <h2 className="mt-3 text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
                 New arrivals
               </h2>
               <p className="mt-4 text-sm leading-6 text-ink-muted">
@@ -166,7 +166,7 @@ export default function HomePage() {
               <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white">
                 <Truck className="h-5 w-5" />
               </span>
-              <h3 className="mt-6 font-display text-3xl font-semibold tracking-tight text-white">
+              <h3 className="mt-6 text-3xl font-semibold tracking-tight text-white">
                 Free shipping over $100
               </h3>
               <p className="mt-3 max-w-sm text-sm leading-6 text-white/70">
@@ -187,7 +187,7 @@ export default function HomePage() {
             <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-accent-soft text-accent">
               <RotateCcw className="h-5 w-5" />
             </span>
-            <h3 className="mt-6 font-display text-3xl font-semibold tracking-tight text-ink">
+            <h3 className="mt-6 text-3xl font-semibold tracking-tight text-ink">
               30 days to change your mind
             </h3>
             <p className="mt-3 max-w-sm text-sm leading-6 text-ink-muted">

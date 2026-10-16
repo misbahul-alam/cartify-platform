@@ -24,7 +24,7 @@ const SummaryDetails: React.FC<SummaryDetailsProps> = ({
 }) => {
   return (
     <>
-      <h2 className="font-display text-xl font-semibold text-ink">
+      <h2 className="text-xl font-semibold text-ink">
         Your order
       </h2>
 
@@ -65,7 +65,7 @@ const SummaryDetails: React.FC<SummaryDetailsProps> = ({
 
         <div className="flex items-center justify-between border-t border-line pt-4">
           <span className="text-sm font-semibold text-ink">Total</span>
-          <span className="font-display text-2xl font-semibold text-ink">
+          <span className="text-2xl font-semibold text-ink">
             ${finalTotal.toFixed(2)}
           </span>
         </div>

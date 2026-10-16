@@ -19,7 +19,7 @@ const ShippingDetails: React.FC<ShippingDetailsProps> = ({
         <span className="flex h-10 w-10 items-center justify-center rounded-full bg-accent-soft text-accent">
           <MapPin className="h-4 w-4" />
         </span>
-        <h2 className="font-display text-xl font-semibold text-ink">
+        <h2 className="text-xl font-semibold text-ink">
           Shipping details
         </h2>
       </div>

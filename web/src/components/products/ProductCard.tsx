@@ -80,7 +80,7 @@ export const ProductCard: React.FC<Props> = ({ product }) => {
           {product.category?.name || "Product"}
         </p>
         <Link href={`/products/${product.slug}`} className="mt-2">
-          <h3 className="font-display text-lg font-semibold leading-snug text-ink transition-colors group-hover:text-accent">
+          <h3 className="text-lg font-semibold leading-snug text-ink transition-colors group-hover:text-accent">
             {product.name}
           </h3>
         </Link>

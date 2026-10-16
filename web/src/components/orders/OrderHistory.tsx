@@ -135,7 +135,7 @@ export const OrderHistory: React.FC = () => {
       <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Orders" }]} />
 
       <div className="mb-10">
-        <h1 className="font-display text-4xl font-semibold tracking-tight text-ink">
+        <h1 className="text-4xl font-semibold tracking-tight text-ink">
           Your orders
         </h1>
         <p className="mt-2 text-sm text-ink-muted">
@@ -156,7 +156,7 @@ export const OrderHistory: React.FC = () => {
                     Order
                   </p>
                   <p
-                    className="truncate font-mono text-xs text-ink-muted"
+                    className="truncate text-xs tabular-nums text-ink-muted"
                     title={order.id}
                   >
                     {order.id.slice(0, 8)}…
@@ -215,7 +215,7 @@ export const OrderHistory: React.FC = () => {
                   className="flex items-center justify-between gap-4 py-4"
                 >
                   <div>
-                    <p className="font-display text-lg font-semibold text-ink">
+                    <p className="text-lg font-semibold text-ink">
                       {item.product_name}
                     </p>
                     <p className="mt-0.5 text-xs text-ink-subtle">

@@ -53,7 +53,7 @@ export const HeroSection: React.FC = () => {
             The 2026 edit is here
           </span>
 
-          <h1 className="mt-7 font-display text-5xl font-semibold leading-[1.02] tracking-tight text-ink sm:text-6xl lg:text-7xl">
+          <h1 className="mt-7 text-5xl font-semibold leading-[1.05] tracking-tight text-ink sm:text-6xl lg:text-7xl">
             Considered goods for the everyday.
           </h1>
 
@@ -81,7 +81,7 @@ export const HeroSection: React.FC = () => {
           <dl className="mt-12 grid max-w-md grid-cols-3 gap-6 border-t border-line pt-8">
             {stats.map((stat) => (
               <div key={stat.label}>
-                <dt className="font-display text-2xl font-semibold text-ink sm:text-3xl">
+                <dt className="text-2xl font-semibold text-ink sm:text-3xl">
                   {stat.value}
                 </dt>
                 <dd className="mt-1 text-xs leading-5 text-ink-subtle">
@@ -131,7 +131,7 @@ export const HeroSection: React.FC = () => {
                 <p className="truncate text-[11px] uppercase tracking-widest text-ink-subtle">
                   {spotlight.category?.name || "Featured"}
                 </p>
-                <p className="mt-1.5 truncate font-display text-lg font-semibold text-ink">
+                <p className="mt-1.5 truncate text-lg font-semibold text-ink">
                   {spotlight.name}
                 </p>
                 <div className="mt-3 flex items-center justify-between">
@@ -155,7 +155,7 @@ export const HeroSection: React.FC = () => {
                 <p className="text-[11px] uppercase tracking-widest text-ink-subtle">
                   The collection
                 </p>
-                <p className="mt-1.5 font-display text-lg font-semibold text-ink">
+                <p className="mt-1.5 text-lg font-semibold text-ink">
                   120+ considered pieces
                 </p>
                 <Link

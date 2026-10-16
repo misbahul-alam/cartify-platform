@@ -29,8 +29,6 @@
   --font-sans:
     var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI",
     sans-serif;
-  --font-display:
-    var(--font-fraunces), ui-serif, Georgia, "Times New Roman", serif;
 
   --color-canvas: var(--canvas);
   --color-surface: var(--surface);
@@ -66,7 +64,22 @@ body {
   background-color: var(--canvas);
   color: var(--ink);
   font-family: var(--font-sans);
+  font-variant-numeric: tabular-nums;
   min-height: 100vh;
+}
+
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4 {
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
 }
 
 ::selection {

@@ -35,7 +35,7 @@ export const Footer: React.FC = () => {
         <div className="grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-4">
             <Link href="/" className="flex items-baseline gap-1.5">
-              <span className="font-display text-3xl font-semibold tracking-tight">
+              <span className="text-3xl font-semibold tracking-[-0.03em]">
                 Cartify
               </span>
               <span className="h-1.5 w-1.5 rounded-full bg-accent-soft" />

@@ -153,16 +153,16 @@ export const ProductDetail: React.FC<Props> = ({ slug }) => {
                 {product.is_stock ? "In stock" : "Out of stock"}
               </span>
             </div>
-            <h1 className="mt-4 font-display text-4xl font-semibold leading-tight tracking-tight text-ink sm:text-5xl">
+            <h1 className="mt-4 text-4xl font-semibold leading-tight tracking-tight text-ink sm:text-5xl">
               {product.name}
             </h1>
-            <p className="mt-3 font-mono text-xs text-ink-subtle">
+            <p className="mt-3 text-xs tabular-nums text-ink-subtle">
               SKU {product.sku}
             </p>
           </div>
 
           <div className="border-y border-line py-6">
-            <span className="font-display text-4xl font-semibold text-ink">
+            <span className="text-4xl font-semibold text-ink">
               $
               {product.price.toLocaleString("en-US", {
                 minimumFractionDigits: 2,

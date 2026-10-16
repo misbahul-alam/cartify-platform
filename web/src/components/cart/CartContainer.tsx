@@ -74,7 +74,7 @@ export const CartContainer: React.FC = () => {
 
       <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-4xl font-semibold tracking-tight text-ink">
+          <h1 className="text-4xl font-semibold tracking-tight text-ink">
             Your cart
           </h1>
           <p className="mt-2 text-sm text-ink-muted">
@@ -111,7 +111,7 @@ export const CartContainer: React.FC = () => {
 
               <div className="min-w-0 flex-1">
                 <Link href={`/products/${item.product.slug}`}>
-                  <h3 className="truncate font-display text-lg font-semibold text-ink transition-colors hover:text-accent">
+                  <h3 className="truncate text-lg font-semibold text-ink transition-colors hover:text-accent">
                     {item.product.name}
                   </h3>
                 </Link>
@@ -166,7 +166,7 @@ export const CartContainer: React.FC = () => {
 
         <div className="space-y-4 lg:sticky lg:top-32">
           <div className="rounded-2xl border border-line bg-surface p-6">
-            <h2 className="font-display text-xl font-semibold text-ink">
+            <h2 className="text-xl font-semibold text-ink">
               Order summary
             </h2>
 
@@ -205,7 +205,7 @@ export const CartContainer: React.FC = () => {
 
               <div className="flex items-center justify-between border-t border-line pt-4">
                 <span className="text-sm font-semibold text-ink">Total</span>
-                <span className="font-display text-2xl font-semibold text-ink">
+                <span className="text-2xl font-semibold text-ink">
                   ${formatPrice(finalTotal)}
                 </span>
               </div>

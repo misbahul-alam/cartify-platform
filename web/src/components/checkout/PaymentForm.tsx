@@ -69,7 +69,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
     <div className="rounded-2xl border border-line bg-surface p-5 text-left">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-semibold text-ink">Payment</h3>
-        <span className="font-display text-lg font-semibold text-ink">
+        <span className="text-lg font-semibold text-ink">
           {formattedAmount}
         </span>
       </div>
