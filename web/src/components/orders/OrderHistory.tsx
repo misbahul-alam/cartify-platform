@@ -2,43 +2,19 @@
 
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import {
-  CheckCircle2,
-  Clock,
-  History,
-  Package,
-  Truck,
-  XCircle,
-} from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, History, XCircle } from "lucide-react";
 import {
   Breadcrumb,
   EmptyState,
   SkeletonBlock,
   SkeletonRow,
 } from "@/components/ui";
+import { OrderStatusBadge } from "./OrderStatusBadge";
 import type { Order } from "@/types";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useOrdersStore } from "@/store/useOrdersStore";
 import { getErrorMessage } from "@/lib/errors";
-
-const statusStyles: Record<string, string> = {
-  delivered: "bg-success-soft text-success",
-  paid: "bg-accent-soft text-accent-strong",
-  shipped: "bg-accent-soft text-accent-strong",
-  processing: "bg-warning-soft text-warning",
-  pending: "bg-warning-soft text-warning",
-  cancelled: "bg-danger-soft text-danger",
-};
-
-const statusIcons: Record<string, React.ComponentType<{ className?: string }>> =
-  {
-    delivered: CheckCircle2,
-    paid: CheckCircle2,
-    shipped: Truck,
-    processing: Clock,
-    pending: Clock,
-    cancelled: XCircle,
-  };
 
 const formatDate = (value: string) => {
   const date = new Date(value);
@@ -76,21 +52,6 @@ export const OrderHistory: React.FC = () => {
     } catch (cancelError: unknown) {
       window.alert(getErrorMessage(cancelError, "Failed to cancel order"));
     }
-  };
-
-  const renderStatus = (status: string) => {
-    const key = status.toLowerCase();
-    const Icon = statusIcons[key] || Package;
-    return (
-      <span
-        className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-medium capitalize ${
-          statusStyles[key] || "bg-surface-muted text-ink-muted"
-        }`}
-      >
-        <Icon className="h-3.5 w-3.5" />
-        {key}
-      </span>
-    );
   };
 
   if (loading) {
@@ -195,7 +156,7 @@ export const OrderHistory: React.FC = () => {
               </div>
 
               <div className="flex shrink-0 items-center gap-3">
-                {renderStatus(order.status)}
+                <OrderStatusBadge status={order.status} />
                 {(order.status.toLowerCase() === "pending" ||
                   order.status.toLowerCase() === "processing") && (
                   <button
@@ -205,6 +166,13 @@ export const OrderHistory: React.FC = () => {
                     Cancel
                   </button>
                 )}
+                <Link
+                  href={`/orders/${order.id}`}
+                  className="inline-flex items-center gap-1 text-xs font-medium text-accent transition-colors hover:text-accent-strong"
+                >
+                  View details
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
               </div>
             </div>
 

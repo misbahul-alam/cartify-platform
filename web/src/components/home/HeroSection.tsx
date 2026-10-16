@@ -116,6 +116,7 @@ export const HeroSection: React.FC = () => {
               fill
               loading="eager"
               fetchPriority="high"
+              preload
               sizes="(max-width: 1024px) 100vw, 448px"
               className="object-cover object-center"
             />

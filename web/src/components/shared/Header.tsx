@@ -4,10 +4,12 @@ import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
   ChevronDown,
+  LayoutDashboard,
   LogOut,
   Menu,
   Package,
   ShoppingBag,
+  UserRound,
   X,
 } from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
@@ -130,6 +132,27 @@ export const Header: React.FC = () => {
                       <Package className="h-4 w-4" />
                       Orders
                     </Link>
+                    <Link
+                      href="/account"
+                      onClick={() => setAccountOpen(false)}
+                      className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm text-ink-muted transition-colors hover:bg-surface-muted hover:text-ink"
+                    >
+                      <UserRound className="h-4 w-4" />
+                      Account
+                    </Link>
+                    {(user.data.role === "admin" ||
+                      user.data.role === "seller") && (
+                      <Link
+                        href="/admin"
+                        onClick={() => setAccountOpen(false)}
+                        className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm text-ink-muted transition-colors hover:bg-surface-muted hover:text-ink"
+                      >
+                        <LayoutDashboard className="h-4 w-4" />
+                        {user.data.role === "admin"
+                          ? "Admin panel"
+                          : "Seller panel"}
+                      </Link>
+                    )}
                     <button
                       onClick={() => {
                         setAccountOpen(false);

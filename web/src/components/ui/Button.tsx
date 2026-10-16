@@ -1,7 +1,13 @@
 import { cn } from "@/lib/cn";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 
-type ButtonVariant = "primary" | "secondary" | "ghost" | "danger" | "ink";
+type ButtonVariant =
+  | "primary"
+  | "secondary"
+  | "ghost"
+  | "danger"
+  | "destructive"
+  | "ink";
 type ButtonSize = "sm" | "md" | "lg" | "icon";
 
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -18,6 +24,7 @@ const variants: Record<ButtonVariant, string> = {
     "border border-line-strong bg-surface text-ink hover:bg-surface-muted",
   ghost: "text-ink-muted hover:bg-surface-muted hover:text-ink",
   danger: "text-danger hover:bg-danger-soft",
+  destructive: "bg-danger text-white hover:opacity-90",
 };
 
 const sizes: Record<ButtonSize, string> = {

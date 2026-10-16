@@ -8,6 +8,7 @@ type OrdersState = {
   loading: boolean;
   error?: string | null;
   fetchOrders: (page?: number, limit?: number) => Promise<void>;
+  fetchOrderById: (id: string) => Promise<Order>;
   cancelOrder: (id: string) => Promise<void>;
   createOrder: (payload: { shipping_address: string }) => Promise<Order>;
   createPaymentIntent: (opts: {
@@ -32,6 +33,12 @@ export const useOrdersStore = create<OrdersState>((set, get) => ({
       set({ error: getErrorMessage(error, "Failed to fetch orders"), loading: false });
     }
   },
+  async fetchOrderById(id: string) {
+    const res = await api.get(`/orders/${id}`);
+    if (!res.data || !res.data.success)
+      throw new Error(res.data?.message || "Failed to fetch order");
+    return res.data.data as Order;
+  },
   async cancelOrder(id: string) {
     set({ loading: true, error: null });
     try {
@@ -42,6 +49,7 @@ export const useOrdersStore = create<OrdersState>((set, get) => ({
       await get().fetchOrders();
     } catch (error: unknown) {
       set({ error: getErrorMessage(error, "Failed to cancel order"), loading: false });
+      throw error;
     } finally {
       set({ loading: false });
     }

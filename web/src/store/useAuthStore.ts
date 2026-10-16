@@ -29,7 +29,12 @@ interface RegisterDto {
 interface UpdateProfileDto {
   first_name?: string;
   last_name?: string;
-  avatar?: string;
+}
+
+interface UpdatePasswordDto {
+  old_password: string;
+  new_password: string;
+  confirm_password: string;
 }
 
 interface AuthResponse {
@@ -48,6 +53,8 @@ interface AuthState {
   getAccessToken: () => Promise<string | null>;
   logout: () => void;
   updateProfile: (data: UpdateProfileDto) => Promise<void>;
+  updatePassword: (data: UpdatePasswordDto) => Promise<void>;
+  deleteAccount: () => Promise<void>;
   initialize: () => Promise<void>;
 }
 
@@ -190,6 +197,45 @@ export const useAuthStore = create<AuthState>()(
           set({
             loading: false,
             error: getErrorMessage(error, "Profile update failed"),
+          });
+
+          throw error;
+        }
+      },
+
+      updatePassword: async (payload) => {
+        set({
+          loading: true,
+          error: null,
+        });
+
+        try {
+          await api.post("/users/update-password", payload);
+
+          set({ loading: false });
+        } catch (error: unknown) {
+          set({
+            loading: false,
+            error: getErrorMessage(error, "Password update failed"),
+          });
+
+          throw error;
+        }
+      },
+
+      deleteAccount: async () => {
+        set({
+          loading: true,
+          error: null,
+        });
+
+        try {
+          await api.delete("/users");
+          get().logout();
+        } catch (error: unknown) {
+          set({
+            loading: false,
+            error: getErrorMessage(error, "Account deletion failed"),
           });
 
           throw error;

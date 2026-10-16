@@ -5,3 +5,4 @@ export { Input, type InputProps } from "./Input";
 export { Select, type SelectProps } from "./Select";
 export { SkeletonBlock, SkeletonSquare, SkeletonCard, SkeletonRow } from "./Skeleton";
 export { Textarea, type TextareaProps } from "./Textarea";
+export { Toaster } from "./Toaster";
